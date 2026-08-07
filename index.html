@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+
+  <!-- スマートフォンでも適切な大きさで表示するための設定 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="description"
+    content="CASEmeは、カスタマイズしたスマホケースを投稿・共有できるサービスです。"
+  >
+
+  <title>CASEme | スマホケースを見つけよう</title>
+
+  <!-- デザインを設定するCSSファイルを読み込みます -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- ページ上部のヘッダー -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="#" class="logo" aria-label="CASEme ホーム">
+        CASE<span>me</span>
+      </a>
+
+      <nav class="header-nav" aria-label="メインメニュー">
+        <a href="#posts">ホーム</a>
+        <a href="#tags">タグを探す</a>
+        <a href="#post-form">投稿する</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- サービスの紹介部分 -->
+    <section class="hero">
+      <div class="hero-content">
+        <p class="hero-label">SHOW YOUR STYLE</p>
+
+        <h1>
+          今日の自分に、<br>
+        今日のケースを。
+        </h1>
+
+        <p class="hero-description">
+            スマホケースも、おしゃれの一部。
+            ステッカーやキーホルダーを使った、みんなのスタイルから
+            次のカスタマイズを見つけよう。
+        </p>
+
+        <p class="hero-description">
+          ステッカー、キーホルダー、推し活アイテム。
+          みんなのスマホケースを見て、次のカスタマイズの参考にできます。
+        </p>
+
+        <a href="#posts" class="hero-button">投稿を見てみる</a>
+      </div>
+    </section>
+
+    <!-- ハッシュタグの絞り込み部分 -->
+    <section id="tags" class="tag-section">
+      <div class="section-heading">
+        <div>
+          <p class="section-label">DISCOVER</p>
+          <h2>ハッシュタグから探す</h2>
+        </div>
+      </div>
+
+
+      <div class="tag-list" aria-label="ハッシュタグ一覧">
+        <button type="button" class="tag-button active" data-tag="all">
+          すべて
+        </button>
+        <button type="button" class="tag-button" data-tag="推し活">
+          #推し活
+        </button>
+        <button type="button" class="tag-button" data-tag="シンプル">
+          #シンプル
+        </button>
+        <button type="button" class="tag-button" data-tag="キャラクター">
+          #キャラクター
+        </button>
+        <button type="button" class="tag-button" data-tag="クリアケース">
+          #クリアケース
+        </button>
+        <button type="button" class="tag-button" data-tag="スポーツ">
+          #スポーツ
+        </button>
+      </div>
+
+            <!-- キーワード検索 -->
+      <div class="search-area">
+        <label for="post-search" class="search-label">
+          投稿を検索
+        </label>
+
+        <div class="search-input-wrapper">
+          <span class="search-icon" aria-hidden="true">
+            ⌕
+          </span>
+
+          <input
+            type="search"
+            id="post-search"
+            class="post-search"
+            placeholder="タイトル、タグ、機種、アイテムから検索"
+            autocomplete="off"
+          >
+
+          <button
+            type="button"
+            id="clear-search-button"
+            class="clear-search-button"
+            aria-label="検索文字を消去"
+            hidden
+          >
+            ×
+          </button>
+        </div>
+      </div>
+
+        <!-- 端末による絞り込み -->
+      <div class="device-filter-area">
+        <label for="device-filter">
+          端末
+        </label>
+
+        <select
+          id="device-filter"
+          class="device-filter"
+        >
+          <option value="all">すべての端末</option>
+          <option value="iPhone">iPhone</option>
+          <option value="Android">Android</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+
+    </section>
+
+    <!-- 投稿一覧部分 -->
+    <section id="posts" class="posts-section">
+      <div class="section-heading">
+        <div>
+          <p class="section-label">LATEST CASES</p>
+          <h2>みんなのスマホケース</h2>
+        </div>
+
+        <div class="post-list-controls">
+  <p class="post-count">3件の投稿</p>
+
+  <button
+    type="button"
+    id="favorite-filter-button"
+    class="favorite-filter-button"
+    aria-pressed="false"
+  >
+    ♡ お気に入り
+  </button>
+</div>
+      </div>
+
+      <div class="post-grid">
+        <!-- サンプル投稿1 -->
+        
+        <article
+            class="post-card"
+            data-tags="推し活 クリアケース"
+            data-device-type="iPhone"
+>
+          <div class="post-image placeholder-image placeholder-purple">
+            <span>CASE IMAGE</span>
+          </div>
+
+          <div class="post-content">
+            <div class="post-tags">
+              <span>#推し活</span>
+              <span>#クリアケース</span>
+            </div>
+
+            <h3>好きな写真を挟んだクリアケース</h3>
+            <p class="device-name">iPhone 16</p>
+          </div>
+        </article>
+
+        <!-- サンプル投稿2 -->
+        <article
+            class="post-card"
+            data-tags="シンプル"
+            data-device-type="Android"
+>
+          <div class="post-image placeholder-image placeholder-blue">
+            <span>CASE IMAGE</span>
+          </div>
+
+          <div class="post-content">
+            <div class="post-tags">
+              <span>#シンプル</span>
+            </div>
+
+            <h3>モノトーンでまとめたシンプルケース</h3>
+            <p class="device-name">Google Pixel 9</p>
+          </div>
+        </article>
+
+        <!-- サンプル投稿3 -->
+        <article
+            class="post-card"
+            data-tags="キャラクター スポーツ"
+            data-device-type="Android"
+>
+            <div class="post-image placeholder-image placeholder-green">
+                <span>CASE IMAGE</span>
+                </div>
+
+                <div class="post-content">
+                    <div class="post-tags">
+                        <span>#キャラクター</span>
+                        <span>#スポーツ</span>
+                        </div>
+
+                <h3>お気に入りを集めたカスタムケース</h3>
+                <p class="device-name">Galaxy S26</p>
+             </div>
+        </article>
+      </div>
+
+            <div
+        id="empty-post-message"
+        class="empty-post-message"
+        hidden
+      >
+        <p class="empty-post-title">
+          条件に合う投稿がありません
+        </p>
+
+        <p class="empty-post-description">
+          検索文字やハッシュタグ、端末の条件を変更してみてください。
+        </p>
+
+      </div>
+
+    </section>
+
+    <!-- 投稿フォーム部分 -->
+    <section id="post-form" class="form-section">
+      <div class="section-heading">
+        <div>
+          <p class="section-label">SHARE YOUR CASE</p>
+          <h2>スマホケースを投稿する</h2>
+        </div>
+      </div>
+
+      <p class="form-introduction">
+  あなたのスマホケースと、カスタマイズの情報を共有してみましょう。
+</p>
+
+<form id="case-form" class="case-form">
+  <!-- 画像選択 -->
+  <div class="form-group form-group-full">
+    <label for="case-image">
+      スマホケースの画像
+      <span class="required-label">必須</span>
+    </label>
+
+    <div class="image-upload-area">
+  <input
+    type="file"
+    id="case-image"
+    name="caseImage"
+    accept="image/png, image/jpeg, image/webp"
+    required
+  >
+
+  <!-- 選択した画像をここに表示します -->
+  <div id="image-preview-area" class="image-preview-area">
+    <p id="image-preview-message">
+      選択した画像がここに表示されます
+    </p>
+
+    <img
+      id="image-preview"
+      class="image-preview"
+      src=""
+      alt="選択したスマホケース画像のプレビュー"
+      hidden
+    >
+  </div>
+</div>
+
+<p class="input-note">
+  JPG、PNG、WebP形式の画像を選択できます。
+  自分で撮影した画像など、投稿する権利のある画像を使用してください。
+</p>
+  </div>
+
+  <!-- タイトル -->
+  <div class="form-group form-group-full">
+    <label for="case-title">
+      投稿タイトル
+      <span class="required-label">必須</span>
+    </label>
+
+    <input
+      type="text"
+      id="case-title"
+      name="caseTitle"
+      placeholder="例：好きな写真を挟んだクリアケース"
+      maxlength="50"
+      required
+    >
+  </div>
+
+  <!-- 説明文 -->
+  <div class="form-group form-group-full">
+    <label for="case-description">
+      ケースの説明
+    </label>
+
+    <textarea
+      id="case-description"
+      name="caseDescription"
+      rows="5"
+      placeholder="ケースのテーマや、こだわったところを書いてください"
+      maxlength="500"
+    ></textarea>
+  </div>
+
+  <!-- ハッシュタグ -->
+<div class="form-group form-group-full">
+  <label for="tag-input">
+    ハッシュタグ
+  </label>
+
+  <!-- 追加済みのハッシュタグを表示する場所 -->
+  <div
+    id="selected-tags"
+    class="selected-tags"
+    aria-live="polite"
+  ></div>
+
+  <!-- 新しいハッシュタグの入力欄 -->
+  <div class="tag-input-row">
+    <span class="tag-input-symbol">#</span>
+
+    <input
+      type="text"
+      id="tag-input"
+      name="tagInput"
+      placeholder="例：推し活、シンプル、キャラクター"
+      maxlength="30"
+      autocomplete="off"
+    >
+
+    <button
+      type="button"
+      id="add-tag-button"
+      class="add-tag-button"
+    >
+      追加
+    </button>
+  </div>
+
+  <p class="input-note">
+    タグを1つ入力して、Enterキーまたは「追加」を押してください。
+    複数のタグを1つずつ追加できます。
+  </p>
+</div>
+
+  <!-- 端末の種類 -->
+  <div class="form-group">
+    <label for="device-type">
+      端末の種類
+    </label>
+
+    <select id="device-type" name="deviceType">
+      <option value="">選択してください</option>
+      <option value="iPhone">iPhone</option>
+      <option value="Android">Android</option>
+      <option value="その他">その他</option>
+    </select>
+  </div>
+
+  <!-- 機種名 -->
+  <div class="form-group">
+    <label for="device-name">
+      機種名
+    </label>
+
+    <input
+      type="text"
+      id="device-name"
+      name="deviceName"
+      placeholder="例：iPhone 16"
+      maxlength="50"
+    >
+  </div>
+
+  <!-- ケースの情報 -->
+<fieldset class="item-fieldset form-group-full">
+  <legend>ケースの情報</legend>
+
+  <div class="item-fields">
+    <div class="form-group">
+      <label for="case-name">
+        使用したケース
+      </label>
+
+      <input
+        type="text"
+        id="case-name"
+        name="caseName"
+        placeholder="例：クリアケース"
+        maxlength="100"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="case-shop">
+        ケースの購入場所
+      </label>
+
+      <input
+        type="text"
+        id="case-shop"
+        name="caseShop"
+        placeholder="例：Amazon、100円ショップ"
+        maxlength="100"
+      >
+    </div>
+  </div>
+</fieldset>
+
+<!-- ステッカーの情報 -->
+<fieldset class="item-fieldset form-group-full">
+  <legend>ステッカーの情報</legend>
+
+  <div class="item-fields">
+    <div class="form-group">
+      <label for="sticker-name">
+        使用したステッカー
+      </label>
+
+      <input
+        type="text"
+        id="sticker-name"
+        name="stickerName"
+        placeholder="例：キャラクターステッカー"
+        maxlength="100"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="sticker-shop">
+        ステッカーの購入場所
+      </label>
+
+      <input
+        type="text"
+        id="sticker-shop"
+        name="stickerShop"
+        placeholder="例：公式ショップ、雑貨店"
+        maxlength="100"
+      >
+    </div>
+  </div>
+</fieldset>
+
+<!-- キーホルダーの情報 -->
+<fieldset class="item-fieldset form-group-full">
+  <legend>キーホルダーの情報</legend>
+
+  <div class="item-fields">
+    <div class="form-group">
+      <label for="keychain-name">
+        使用したキーホルダー
+      </label>
+
+      <input
+        type="text"
+        id="keychain-name"
+        name="keychainName"
+        placeholder="例：アクリルキーホルダー"
+        maxlength="100"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="keychain-shop">
+        キーホルダーの購入場所
+      </label>
+
+      <input
+        type="text"
+        id="keychain-shop"
+        name="keychainShop"
+        placeholder="例：イベント会場、公式通販"
+        maxlength="100"
+      >
+    </div>
+  </div>
+</fieldset>
+
+<!-- その他の情報 -->
+<div class="form-group form-group-full">
+  <label for="other-items">
+    その他のアイテム・備考
+  </label>
+
+  <textarea
+    id="other-items"
+    name="otherItems"
+    rows="4"
+    placeholder="ほかに使用したアイテムや、購入場所などを書いてください"
+    maxlength="500"
+  ></textarea>
+</div>
+
+  <!-- 投稿ボタン -->
+  <div class="form-actions form-group-full">
+  <div class="form-action-buttons">
+    <button type="submit" class="submit-button">
+      投稿する
+    </button>
+
+    <button
+      type="button"
+      id="cancel-edit-button"
+      class="cancel-edit-button"
+      hidden
+    >
+      編集をキャンセル
+    </button>
+  </div>
+
+  <p
+    class="form-status"
+    id="form-status"
+    aria-live="polite"
+  ></p>
+</div>
+</form>
+    </section>
+  </main>
+
+  <!-- 投稿詳細画面 -->
+  <dialog id="post-detail-dialog" class="post-detail-dialog">
+    <div class="detail-dialog-inner">
+      <button
+        type="button"
+        id="detail-close-button"
+        class="detail-close-button"
+        aria-label="投稿詳細を閉じる"
+      >
+        ×
+      </button>
+
+      <div class="detail-layout">
+        <!-- 詳細画像 -->
+        <div class="detail-image-area">
+          <img
+            id="detail-image"
+            class="detail-image"
+            src=""
+            alt=""
+          >
+        </div>
+
+        <!-- 詳細情報 -->
+        <div class="detail-content">
+          <div id="detail-tags" class="detail-tags"></div>
+
+          <h2 id="detail-title"></h2>
+
+          <p id="detail-device" class="detail-device"></p>
+
+          <section class="detail-section">
+            <h3>ケースの説明</h3>
+            <p id="detail-description"></p>
+          </section>
+
+          <section
+            id="detail-items-section"
+            class="detail-section"
+          >
+            <h3>使用アイテム</h3>
+
+            <dl class="detail-item-list">
+              <div id="detail-case-row">
+                <dt>ケース</dt>
+                <dd id="detail-case"></dd>
+              </div>
+
+              <div id="detail-case-shop-row">
+                <dt>ケースの購入場所</dt>
+                <dd id="detail-case-shop"></dd>
+              </div>
+
+              <div id="detail-sticker-row">
+                <dt>ステッカー</dt>
+                <dd id="detail-sticker"></dd>
+              </div>
+
+              <div id="detail-sticker-shop-row">
+                <dt>ステッカーの購入場所</dt>
+                <dd id="detail-sticker-shop"></dd>
+              </div>
+
+              <div id="detail-keychain-row">
+                <dt>キーホルダー</dt>
+                <dd id="detail-keychain"></dd>
+              </div>
+
+              <div id="detail-keychain-shop-row">
+                <dt>キーホルダーの購入場所</dt>
+                <dd id="detail-keychain-shop"></dd>
+              </div>
+
+              <div id="detail-other-row">
+                <dt>その他・備考</dt>
+                <dd id="detail-other"></dd>
+              </div>
+            </dl>
+          </section>
+
+          <!-- 自分の投稿を管理するボタン -->
+          <div class="detail-actions">
+            <button
+                type="button"
+                id="edit-post-button"
+                class="edit-post-button"
+  >
+                投稿を編集
+                </button>
+
+                <button
+                    type="button"
+                    id="delete-post-button"
+                    class="delete-post-button"
+  >
+                     この投稿を削除
+                    </button>
+                </div>
+
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ページ下部 -->
+  <footer class="site-footer">
+    <p>&copy; 2026 CASEme</p>
+  </footer>
+
+  <!-- 動きを設定するJavaScriptファイルを読み込みます -->
+  <script src="script.js"></script>
+</body>
+</html>
