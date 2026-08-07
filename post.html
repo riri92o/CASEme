@@ -35,6 +35,23 @@
         >
           投稿する
         </a>
+
+        <a
+          href="auth.html"
+          id="auth-link"
+          class="auth-link"
+        >
+          ログイン
+        </a>
+
+        <button
+          type="button"
+          id="logout-button"
+          class="logout-button"
+          hidden
+        >
+          ログアウト
+        </button>
       </nav>
     </div>
   </header>
@@ -443,70 +460,106 @@
 <fieldset class="item-fieldset form-group-full">
   <legend>ステッカーの情報</legend>
 
-  <div class="item-fields">
-    <div class="form-group">
-      <label for="sticker-name">
-        使用したステッカー
-      </label>
+  <div
+    id="sticker-fields"
+    class="multiple-item-fields"
+  >
+    <div class="multiple-item-row">
+      <div class="item-fields">
+        <div class="form-group">
+          <label>
+            使用したステッカー
+          </label>
 
-      <input
-        type="text"
-        id="sticker-name"
-        name="stickerName"
-        placeholder="例：キャラクターステッカー"
-        maxlength="100"
+          <input
+            type="text"
+            class="sticker-name-input"
+            placeholder="例：キャラクターステッカー"
+            maxlength="100"
+          >
+        </div>
+
+        <div class="form-group">
+          <label>
+            ステッカーの購入場所
+          </label>
+
+          <input
+            type="text"
+            class="sticker-shop-input"
+            placeholder="例：公式ショップ、雑貨店"
+            maxlength="100"
+          >
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="remove-item-button"
+        aria-label="このステッカーを削除"
+        hidden
       >
-    </div>
-
-    <div class="form-group">
-      <label for="sticker-shop">
-        ステッカーの購入場所
-      </label>
-
-      <input
-        type="text"
-        id="sticker-shop"
-        name="stickerShop"
-        placeholder="例：公式ショップ、雑貨店"
-        maxlength="100"
-      >
+        ×
+      </button>
     </div>
   </div>
+
+  <p class="input-note">
+    入力を始めると、次のステッカー欄が自動的に追加されます。
+  </p>
 </fieldset>
 
 <!-- キーホルダーの情報 -->
 <fieldset class="item-fieldset form-group-full">
   <legend>キーホルダーの情報</legend>
 
-  <div class="item-fields">
-    <div class="form-group">
-      <label for="keychain-name">
-        使用したキーホルダー
-      </label>
+  <div
+    id="keychain-fields"
+    class="multiple-item-fields"
+  >
+    <div class="multiple-item-row">
+      <div class="item-fields">
+        <div class="form-group">
+          <label>
+            使用したキーホルダー
+          </label>
 
-      <input
-        type="text"
-        id="keychain-name"
-        name="keychainName"
-        placeholder="例：アクリルキーホルダー"
-        maxlength="100"
+          <input
+            type="text"
+            class="keychain-name-input"
+            placeholder="例：アクリルキーホルダー"
+            maxlength="100"
+          >
+        </div>
+
+        <div class="form-group">
+          <label>
+            キーホルダーの購入場所
+          </label>
+
+          <input
+            type="text"
+            class="keychain-shop-input"
+            placeholder="例：イベント会場、公式通販"
+            maxlength="100"
+          >
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="remove-item-button"
+        aria-label="このキーホルダーを削除"
+        hidden
       >
-    </div>
-
-    <div class="form-group">
-      <label for="keychain-shop">
-        キーホルダーの購入場所
-      </label>
-
-      <input
-        type="text"
-        id="keychain-shop"
-        name="keychainShop"
-        placeholder="例：イベント会場、公式通販"
-        maxlength="100"
-      >
+        ×
+      </button>
     </div>
   </div>
+
+  <p class="input-note">
+    入力を始めると、次のキーホルダー欄が自動的に追加されます。
+  </p>
 </fieldset>
 
 <!-- その他の情報 -->
@@ -661,6 +714,17 @@
   </footer>
 
   <!-- 動きを設定するJavaScriptファイルを読み込みます -->
-  <script src="script.js"></script>
+  
+  <!-- Supabase公式JavaScriptライブラリ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- CASEmeのSupabase接続設定 -->
+<script src="supabase-config.js"></script>
+
+<!-- ヘッダーのログイン状態を管理 -->
+<script src="auth-ui.js"></script>
+
+<!-- CASEme本体の処理 -->
+<script src="script.js"></script>
 </body>
 </html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="CASEmeへのログイン・新規登録ページです。"
+  >
+
+  <title>ログイン・新規登録 | CASEme</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-page">
+  <header class="site-header">
+    <div class="header-inner">
+      <a
+        href="index.html"
+        class="logo"
+        aria-label="CASEme ホーム"
+      >
+        CASE<span>me</span>
+      </a>
+
+      <nav class="header-nav" aria-label="メインメニュー">
+        <a href="index.html">ホーム</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="auth-main">
+    <section class="auth-card">
+      <div class="auth-heading">
+        <p class="section-label">WELCOME TO CASEME</p>
+
+        <h1>今日の自分に、<br>
+            今日のケースを。</h1>
+
+        <p>
+          ログインすると、スマホケースの投稿・編集・削除ができます。
+        </p>
+      </div>
+
+      <!-- ログインと新規登録の切り替え -->
+      <div class="auth-tabs" role="tablist">
+        <button
+          type="button"
+          id="login-tab"
+          class="auth-tab active"
+          role="tab"
+          aria-selected="true"
+          aria-controls="login-form"
+        >
+          ログイン
+        </button>
+
+        <button
+          type="button"
+          id="signup-tab"
+          class="auth-tab"
+          role="tab"
+          aria-selected="false"
+          aria-controls="signup-form"
+        >
+          新規登録
+        </button>
+      </div>
+
+      <!-- ログインフォーム -->
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="login-email">
+            メールアドレス
+          </label>
+
+          <input
+            type="email"
+            id="login-email"
+            autocomplete="email"
+            placeholder="example@email.com"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">
+            パスワード
+          </label>
+
+          <input
+            type="password"
+            id="login-password"
+            autocomplete="current-password"
+            minlength="8"
+            required
+          >
+        </div>
+
+        <button type="submit" class="auth-submit-button">
+          ログイン
+        </button>
+
+        <p
+          id="login-status"
+          class="auth-status"
+          aria-live="polite"
+        ></p>
+      </form>
+
+      <!-- 新規登録フォーム -->
+      <form
+        id="signup-form"
+        class="auth-form"
+        hidden
+      >
+        <div class="form-group">
+          <label for="signup-email">
+            メールアドレス
+          </label>
+
+          <input
+            type="email"
+            id="signup-email"
+            autocomplete="email"
+            placeholder="example@email.com"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="signup-password">
+            パスワード
+          </label>
+
+          <input
+            type="password"
+            id="signup-password"
+            autocomplete="new-password"
+            minlength="8"
+            required
+          >
+
+          <p class="input-note">
+            8文字以上で設定してください。
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="signup-password-confirmation">
+            パスワードをもう一度入力
+          </label>
+
+          <input
+            type="password"
+            id="signup-password-confirmation"
+            autocomplete="new-password"
+            minlength="8"
+            required
+          >
+        </div>
+
+        <button type="submit" class="auth-submit-button">
+          アカウントを作成
+        </button>
+
+        <p class="auth-notice">
+          登録したメールアドレスは公開されません。
+        </p>
+
+        <p
+          id="signup-status"
+          class="auth-status"
+          aria-live="polite"
+        ></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 CASEme</p>
+  </footer>
+
+  <!-- Supabase公式JavaScriptライブラリ -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- CASEmeのSupabase接続設定 -->
+  <script src="supabase-config.js"></script>
+
+  <!-- ログイン・新規登録専用の処理 -->
+  <script src="auth.js"></script>
+</body>
+</html>
+

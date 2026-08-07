@@ -40,6 +40,15 @@ const stickerNameInput = document.querySelector("#sticker-name");
 const stickerShopInput = document.querySelector("#sticker-shop");
 const keychainNameInput = document.querySelector("#keychain-name");
 const keychainShopInput = document.querySelector("#keychain-shop");
+
+const stickerFields = document.querySelector(
+  "#sticker-fields"
+);
+
+const keychainFields = document.querySelector(
+  "#keychain-fields"
+);
+
 const otherItemsInput = document.querySelector("#other-items");
 
 const formStatus = document.querySelector("#form-status");
@@ -626,11 +635,19 @@ caseForm.addEventListener("submit", async (event) => {
 
   const caseName = caseNameInput.value.trim();
   const caseShop = caseShopInput.value.trim();
-  const stickerName = stickerNameInput.value.trim();
-  const stickerShop = stickerShopInput.value.trim();
-  const keychainName = keychainNameInput.value.trim();
-  const keychainShop = keychainShopInput.value.trim();
-  const otherItems = otherItemsInput.value.trim();
+  const stickers = collectMultipleItems(
+  stickerFields,
+  ".sticker-name-input",
+  ".sticker-shop-input"
+);
+
+const keychains = collectMultipleItems(
+  keychainFields,
+  ".keychain-name-input",
+  ".keychain-shop-input"
+);
+
+const otherItems = otherItemsInput.value.trim();
 
   const postBeingEdited = editingPostId
     ? savedPosts.find((post) => post.id === editingPostId)
@@ -683,10 +700,8 @@ caseForm.addEventListener("submit", async (event) => {
 
     caseName,
     caseShop,
-    stickerName,
-    stickerShop,
-    keychainName,
-    keychainShop,
+    stickers,
+    keychains,
     otherItems,
 
     imageUrl: postImageUrl,
@@ -770,6 +785,9 @@ caseForm.addEventListener("submit", async (event) => {
   caseForm.reset();
   clearImagePreview();
 
+  resetMultipleItemFields(stickerFields);
+  resetMultipleItemFields(keychainFields);
+
   selectedFormTags = [];
   displaySelectedFormTags();
 
@@ -842,6 +860,50 @@ function setDetailItem(rowId, valueId, value) {
   valueElement.textContent = hasValue ? value : "";
 }
 
+function formatMultipleItems(
+  items,
+  oldName = "",
+  oldShop = ""
+) {
+  let normalizedItems = [];
+
+  if (Array.isArray(items)) {
+    normalizedItems = items;
+  }
+
+  // 以前の形式で保存された投稿にも対応します
+  if (
+    normalizedItems.length === 0 &&
+    (oldName || oldShop)
+  ) {
+    normalizedItems = [
+      {
+        name: oldName,
+        shop: oldShop
+      }
+    ];
+  }
+
+  return normalizedItems
+    .filter((item) => {
+      return item && (item.name || item.shop);
+    })
+    .map((item, index) => {
+      const itemName =
+        item.name && item.name.trim() !== ""
+          ? item.name
+          : "名称未入力";
+
+      const shopText =
+        item.shop && item.shop.trim() !== ""
+          ? ` / 購入場所：${item.shop}`
+          : "";
+
+      return `${index + 1}. ${itemName}${shopText}`;
+    })
+    .join("\n");
+}
+
 function openPostDetail(postData) {
     // 現在開いている投稿を記録します
     openedPostId = postData.id;
@@ -903,29 +965,43 @@ function openPostDetail(postData) {
     postData.caseShop
   );
 
-  setDetailItem(
-    "detail-sticker-row",
-    "detail-sticker",
-    postData.stickerName
-  );
+  const formattedStickers = formatMultipleItems(
+  postData.stickers,
+  postData.stickerName,
+  postData.stickerShop
+);
 
-  setDetailItem(
-    "detail-sticker-shop-row",
-    "detail-sticker-shop",
-    postData.stickerShop
-  );
+const formattedKeychains = formatMultipleItems(
+  postData.keychains,
+  postData.keychainName,
+  postData.keychainShop
+);
 
-  setDetailItem(
-    "detail-keychain-row",
-    "detail-keychain",
-    postData.keychainName
-  );
+setDetailItem(
+  "detail-sticker-row",
+  "detail-sticker",
+  formattedStickers
+);
 
-  setDetailItem(
-    "detail-keychain-shop-row",
-    "detail-keychain-shop",
-    postData.keychainShop
-  );
+// 購入場所はステッカー名と一緒に表示します
+setDetailItem(
+  "detail-sticker-shop-row",
+  "detail-sticker-shop",
+  ""
+);
+
+setDetailItem(
+  "detail-keychain-row",
+  "detail-keychain",
+  formattedKeychains
+);
+
+// 購入場所はキーホルダー名と一緒に表示します
+setDetailItem(
+  "detail-keychain-shop-row",
+  "detail-keychain-shop",
+  ""
+);
 
   setDetailItem(
     "detail-other-row",
@@ -935,14 +1011,12 @@ function openPostDetail(postData) {
 
   // アイテム情報がすべて空なら、項目全体を隠します
   const itemValues = [
-    postData.caseName,
-    postData.caseShop,
-    postData.stickerName,
-    postData.stickerShop,
-    postData.keychainName,
-    postData.keychainShop,
-    postData.otherItems
-  ];
+  postData.caseName,
+  postData.caseShop,
+  formattedStickers,
+  formattedKeychains,
+  postData.otherItems
+];
 
   const hasAnyItemInformation = itemValues.some((value) => {
     return typeof value === "string" && value.trim() !== "";
@@ -1186,14 +1260,23 @@ editingPostId = postToEdit.id;
   caseNameInput.value = postToEdit.caseName ?? "";
   caseShopInput.value = postToEdit.caseShop ?? "";
 
-  stickerNameInput.value = postToEdit.stickerName ?? "";
-  stickerShopInput.value = postToEdit.stickerShop ?? "";
+ fillMultipleItemFields(
+  stickerFields,
+  postToEdit.stickers,
+  postToEdit.stickerName,
+  postToEdit.stickerShop,
+  ".sticker-name-input",
+  ".sticker-shop-input"
+);
 
-  keychainNameInput.value =
-    postToEdit.keychainName ?? "";
-
-  keychainShopInput.value =
-    postToEdit.keychainShop ?? "";
+fillMultipleItemFields(
+  keychainFields,
+  postToEdit.keychains,
+  postToEdit.keychainName,
+  postToEdit.keychainShop,
+  ".keychain-name-input",
+  ".keychain-shop-input"
+);
 
   otherItemsInput.value = postToEdit.otherItems ?? "";
 
@@ -1301,3 +1384,241 @@ function startPendingEdit() {
 }
 
 startPendingEdit();
+
+// =========================
+// 複数アイテム入力欄
+// =========================
+
+function rowHasItemValue(row) {
+  const inputs = row.querySelectorAll("input");
+
+  return Array.from(inputs).some((input) => {
+    return input.value.trim() !== "";
+  });
+}
+
+function updateItemRemoveButtons(container) {
+  const rows = container.querySelectorAll(
+    ".multiple-item-row"
+  );
+
+  rows.forEach((row) => {
+    const removeButton = row.querySelector(
+      ".remove-item-button"
+    );
+
+    // 何か入力されている行だけ削除可能にします
+    removeButton.hidden = !rowHasItemValue(row);
+  });
+}
+
+function appendEmptyItemRow(container) {
+  const firstRow = container.querySelector(
+    ".multiple-item-row"
+  );
+
+  const newRow = firstRow.cloneNode(true);
+
+  newRow.querySelectorAll("input").forEach((input) => {
+    input.value = "";
+  });
+
+  const removeButton = newRow.querySelector(
+    ".remove-item-button"
+  );
+
+  removeButton.hidden = true;
+
+  container.appendChild(newRow);
+}
+
+function setupMultipleItemFields(container) {
+  // index.html側など、対象がないページでは処理しません
+  if (!container) {
+    return;
+  }
+
+  container.addEventListener("input", () => {
+    const rows = container.querySelectorAll(
+      ".multiple-item-row"
+    );
+
+    const lastRow = rows[rows.length - 1];
+
+    // 最後の行へ入力されたら新しい空欄を追加します
+    if (rowHasItemValue(lastRow)) {
+      appendEmptyItemRow(container);
+    }
+
+    updateItemRemoveButtons(container);
+  });
+
+  container.addEventListener("click", (event) => {
+    const removeButton = event.target.closest(
+      ".remove-item-button"
+    );
+
+    if (!removeButton) {
+      return;
+    }
+
+    const row = removeButton.closest(
+      ".multiple-item-row"
+    );
+
+    row.remove();
+
+    const remainingRows = container.querySelectorAll(
+      ".multiple-item-row"
+    );
+
+    // 万が一すべてなくなったら空欄を作り直します
+    if (remainingRows.length === 0) {
+      appendEmptyItemRow(container);
+    }
+
+    updateItemRemoveButtons(container);
+  });
+
+  updateItemRemoveButtons(container);
+}
+
+setupMultipleItemFields(stickerFields);
+setupMultipleItemFields(keychainFields);
+
+// =========================
+// 複数アイテムのデータ取得
+// =========================
+
+function collectMultipleItems(
+  container,
+  nameSelector,
+  shopSelector
+) {
+  if (!container) {
+    return [];
+  }
+
+  const rows = container.querySelectorAll(
+    ".multiple-item-row"
+  );
+
+  return Array.from(rows)
+    .map((row) => {
+      const nameInput = row.querySelector(nameSelector);
+      const shopInput = row.querySelector(shopSelector);
+
+      return {
+        name: nameInput.value.trim(),
+        shop: shopInput.value.trim()
+      };
+    })
+    .filter((item) => {
+      // 名前か購入場所のどちらかがあれば保存します
+      return item.name !== "" || item.shop !== "";
+    });
+}
+
+function resetMultipleItemFields(container) {
+  if (!container) {
+    return;
+  }
+
+  const rows = Array.from(
+    container.querySelectorAll(".multiple-item-row")
+  );
+
+  // 1行目以外を削除します
+  rows.slice(1).forEach((row) => {
+    row.remove();
+  });
+
+  const firstRow = container.querySelector(
+    ".multiple-item-row"
+  );
+
+  firstRow.querySelectorAll("input").forEach((input) => {
+    input.value = "";
+  });
+
+  updateItemRemoveButtons(container);
+}
+
+// =========================
+// 複数アイテムを編集フォームへ戻す
+// =========================
+
+function fillMultipleItemFields(
+  container,
+  items,
+  oldName,
+  oldShop,
+  nameSelector,
+  shopSelector
+) {
+  if (!container) {
+    return;
+  }
+
+  let normalizedItems = Array.isArray(items)
+    ? items.filter((item) => {
+        return item && (item.name || item.shop);
+      })
+    : [];
+
+  // 以前の形式で保存された投稿にも対応します
+  if (
+    normalizedItems.length === 0 &&
+    (oldName || oldShop)
+  ) {
+    normalizedItems = [
+      {
+        name: oldName,
+        shop: oldShop
+      }
+    ];
+  }
+
+  const originalRow = container.querySelector(
+    ".multiple-item-row"
+  );
+
+  const rowTemplate = originalRow.cloneNode(true);
+
+  // 現在表示されている行を一度すべて取り除きます
+  container.replaceChildren();
+
+  function createEmptyRow() {
+    const row = rowTemplate.cloneNode(true);
+
+    row.querySelectorAll("input").forEach((input) => {
+      input.value = "";
+    });
+
+    const removeButton = row.querySelector(
+      ".remove-item-button"
+    );
+
+    removeButton.hidden = true;
+
+    return row;
+  }
+
+  // 保存済みのアイテムを1行ずつ作ります
+  normalizedItems.forEach((item) => {
+    const row = createEmptyRow();
+
+    row.querySelector(nameSelector).value =
+      item.name ?? "";
+
+    row.querySelector(shopSelector).value =
+      item.shop ?? "";
+
+    container.appendChild(row);
+  });
+
+  // 最後に新規入力用の空欄を1つ追加します
+  container.appendChild(createEmptyRow());
+
+  updateItemRemoveButtons(container);
+}

@@ -1626,3 +1626,278 @@ button {
   }
 }
 
+/* =========================
+   ログイン・新規登録ページ
+========================= */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-main {
+  width: min(100% - 40px, 520px);
+  margin: 0 auto;
+  padding: 64px 0 80px;
+  flex: 1;
+}
+
+.auth-card {
+  padding: 38px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.auth-heading {
+  margin-bottom: 28px;
+}
+
+.auth-heading h1 {
+  margin: 0;
+  font-size: clamp(26px, 5vw, 36px);
+  line-height: 1.35;
+  letter-spacing: -0.04em;
+}
+
+.auth-heading > p:last-child {
+  margin: 13px 0 0;
+  color: var(--text-sub);
+  font-size: 13px;
+}
+
+.auth-tabs {
+  margin-bottom: 28px;
+  padding: 4px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  background-color: var(--background);
+  border-radius: 11px;
+}
+
+.auth-tab {
+  min-height: 42px;
+  padding: 0 12px;
+  color: var(--text-sub);
+  background-color: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.auth-tab.active {
+  color: var(--text-main);
+  background-color: var(--surface);
+  box-shadow: 0 2px 8px rgba(20, 30, 25, 0.08);
+}
+
+.auth-form {
+  display: grid;
+  gap: 21px;
+}
+
+.auth-form[hidden] {
+  display: none;
+}
+
+.auth-submit-button {
+  min-height: 48px;
+  margin-top: 4px;
+  color: #ffffff;
+  background-color: var(--accent);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.auth-submit-button:hover {
+  background-color: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+.auth-submit-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+  transform: none;
+}
+
+.auth-notice {
+  margin: -8px 0 0;
+  color: var(--text-sub);
+  font-size: 11px;
+  text-align: center;
+}
+
+.auth-status {
+  min-height: 1.6em;
+  margin: -8px 0 0;
+  color: var(--accent-dark);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.auth-status.error {
+  color: #a94f4f;
+}
+
+@media (max-width: 600px) {
+  .auth-main {
+    width: calc(100% - 28px);
+    padding: 38px 0 60px;
+  }
+
+  .auth-card {
+    padding: 28px 20px;
+    border-radius: 15px;
+    box-shadow: none;
+  }
+}
+
+/* =========================
+   ヘッダーの認証ボタン
+========================= */
+
+.header-nav .auth-link {
+  color: var(--text-sub);
+}
+
+.header-nav .auth-link:hover {
+  color: var(--accent-dark);
+}
+
+.logout-button {
+  min-height: 36px;
+  padding: 0 13px;
+  color: var(--text-sub);
+  background-color: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.logout-button:hover {
+  color: var(--accent-dark);
+  background-color: var(--accent-light);
+  border-color: #c8d8ce;
+}
+
+.logout-button[hidden] {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .header-nav {
+    gap: 10px;
+  }
+
+  .logout-button {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+}
+
+/* =========================
+   複数アイテム入力
+========================= */
+
+.multiple-item-fields {
+  display: grid;
+  gap: 20px;
+}
+
+.multiple-item-row {
+  padding-right: 42px;
+  position: relative;
+}
+
+.multiple-item-row + .multiple-item-row {
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.remove-item-button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  position: absolute;
+  top: 7px;
+  right: 0;
+  color: var(--text-sub);
+  background-color: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.multiple-item-row + .multiple-item-row
+  .remove-item-button {
+  top: 27px;
+}
+
+.remove-item-button:hover {
+  color: #ffffff;
+  background-color: #a94f4f;
+  border-color: #a94f4f;
+}
+
+.remove-item-button[hidden] {
+  display: none;
+}
+
+.multiple-item-fields + .input-note {
+  margin-top: 13px;
+}
+
+@media (max-width: 700px) {
+  .multiple-item-row {
+    padding-right: 0;
+    padding-top: 42px;
+  }
+
+  .multiple-item-row + .multiple-item-row {
+    padding-top: 62px;
+  }
+
+  .remove-item-button,
+  .multiple-item-row + .multiple-item-row
+    .remove-item-button {
+    top: 5px;
+    right: 0;
+  }
+
+  .multiple-item-row + .multiple-item-row
+    .remove-item-button {
+    top: 25px;
+  }
+}
+
+/* 複数アイテムを行ごとに表示します */
+.detail-item-list dd {
+  white-space: pre-wrap;
+  line-height: 1.8;
+}
