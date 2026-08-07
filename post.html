@@ -11,24 +11,28 @@
     content="CASEmeは、カスタマイズしたスマホケースを投稿・共有できるサービスです。"
   >
 
-  <title>CASEme | スマホケースを見つけよう</title>
+  <title>投稿する | CASEme</title>
 
   <!-- デザインを設定するCSSファイルを読み込みます -->
   <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="home-page">
-<!-- ページ上部のヘッダー -->
+  <body class="post-page">
+    <!-- ページ上部のヘッダー -->
   <header class="site-header">
     <div class="header-inner">
       <a href="index.html" class="logo" aria-label="CASEme ホーム"></a>
       CASE<span>me</span>
       </a>
 
-      <nav class="header-nav" aria-label="メインメニュー">
-       <a href="#posts" aria-current="page">ホーム</a>
-       <a href="#tags">タグを探す</a>
-        <a href="post.html" class="header-post-button">
+     <nav class="header-nav" aria-label="メインメニュー">
+      <a href="index.html">ホーム</a>
+       <a href="index.html#tags">タグを探す</a>
+        <a
+          href="#post-form"
+          class="header-post-button"
+          aria-current="page"
+        >
           投稿する
         </a>
       </nav>

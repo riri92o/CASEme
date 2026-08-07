@@ -779,9 +779,16 @@ cancelEditButton.hidden = true;
 
   filterPosts("all");
 
-  document.querySelector("#posts").scrollIntoView({
-    behavior: "smooth"
-  });
+// 投稿専用ページから投稿した場合はホームへ移動します
+if (document.body.classList.contains("post-page")) {
+  window.location.href = "index.html#posts";
+  return;
+}
+
+// ホーム内で処理された場合は投稿一覧へ移動します
+document.querySelector("#posts").scrollIntoView({
+  behavior: "smooth"
+});
 });
 
 // 保存済みの投稿を読み込みます
@@ -1143,14 +1150,25 @@ editPostButton.addEventListener("click", () => {
   }
 
   const postToEdit = savedPosts.find(
-    (post) => post.id === openedPostId
+  (post) => post.id === openedPostId
+);
+
+if (!postToEdit) {
+  return;
+}
+
+// ホームから編集する場合は投稿IDを一時保存して移動します
+if (document.body.classList.contains("home-page")) {
+  sessionStorage.setItem(
+    "caseme-editing-post-id",
+    postToEdit.id
   );
 
-  if (!postToEdit) {
-    return;
-  }
+  window.location.href = "post.html#post-form";
+  return;
+}
 
-  editingPostId = postToEdit.id;
+editingPostId = postToEdit.id;
 
   // フォームを一度初期状態にします
   caseForm.reset();
@@ -1244,3 +1262,42 @@ cancelEditButton.addEventListener("click", () => {
   formStatus.textContent =
     "編集をキャンセルしました。";
 });
+
+// =========================
+// 別ページからの編集引き継ぎ
+// =========================
+
+function startPendingEdit() {
+  if (!document.body.classList.contains("post-page")) {
+    return;
+  }
+
+  const pendingEditId = sessionStorage.getItem(
+    "caseme-editing-post-id"
+  );
+
+  if (!pendingEditId) {
+    return;
+  }
+
+  const postToEdit = savedPosts.find(
+    (post) => post.id === pendingEditId
+  );
+
+  // 一時データは読み込んだら削除します
+  sessionStorage.removeItem("caseme-editing-post-id");
+
+  if (!postToEdit) {
+    formStatus.textContent =
+      "編集する投稿を読み込めませんでした。";
+    return;
+  }
+
+  // 既存の編集処理を動かすため、開いている投稿IDを設定します
+  openedPostId = postToEdit.id;
+
+  // 編集ボタンを押したときと同じ処理を実行します
+  editPostButton.click();
+}
+
+startPendingEdit();

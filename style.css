@@ -1545,3 +1545,84 @@ button {
     width: 100%;
   }
 }
+
+/* =========================
+   投稿専用ページ
+========================= */
+
+/* 投稿ページではホーム用の内容を非表示にします */
+.post-page .hero,
+.post-page .tag-section,
+.post-page .posts-section {
+  display: none;
+}
+
+.post-page main {
+  min-height: calc(100vh - 133px);
+}
+
+.post-page .form-section {
+  margin-top: 56px;
+}
+
+.post-page .form-section > .section-heading {
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* 現在開いているメニューを表します */
+.header-nav a[aria-current="page"] {
+  color: var(--accent-dark);
+}
+
+.header-nav a[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+
+@media (max-width: 600px) {
+  .post-page .form-section {
+    margin-top: 38px;
+  }
+}
+
+/* ホーム画面では投稿フォームを非表示にします */
+.home-page .form-section {
+  display: none;
+}
+
+/* =========================
+   ヘッダーの投稿ボタン
+========================= */
+
+.header-nav .header-post-button {
+  min-height: 38px;
+  padding: 0 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background-color: var(--accent);
+  border-radius: 999px;
+}
+
+.header-nav .header-post-button:hover {
+  color: #ffffff;
+  background-color: var(--accent-dark);
+}
+
+.header-nav .header-post-button::after {
+  display: none;
+}
+
+.header-nav .header-post-button[aria-current="page"] {
+  color: #ffffff;
+  background-color: var(--accent-dark);
+}
+
+@media (max-width: 600px) {
+  .header-nav .header-post-button {
+    min-height: 36px;
+    padding: 0 14px;
+  }
+}
+
