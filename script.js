@@ -993,7 +993,7 @@ function formatMultipleItems(
     .join("\n");
 }
 
-function openPostDetail(postData) {
+async function openPostDetail(postData) {
     // 現在開いている投稿を記録します
     openedPostId = postData.id;
 
@@ -1114,6 +1114,23 @@ setDetailItem(
   document.querySelector(
     "#detail-items-section"
   ).hidden = !hasAnyItemInformation;
+
+  // Supabase投稿は、投稿した本人だけ編集・削除できます
+if (postData.storageType === "supabase") {
+  const {
+    data: { user }
+} = await caseMeSupabase.auth.getUser();
+
+  const isOwner =
+    user && user.id === postData.userId;
+
+  editPostButton.hidden = !isOwner;
+  deletePostButton.hidden = !isOwner;
+} else {
+  // 従来のLocalStorage投稿はこれまでどおり操作できます
+  editPostButton.hidden = false;
+  deletePostButton.hidden = false;
+}
 
   postDetailDialog.showModal();
 }
@@ -1320,39 +1337,112 @@ deletePostButton.addEventListener("click", async () => {
 // 投稿編集の開始
 // =========================
 
-cancelEditButton.addEventListener("click", () => {
-  const shouldCancel = window.confirm(
-    "投稿の編集をキャンセルしますか？\n変更した内容は保存されません。"
-  );
-
-  if (!shouldCancel) {
+editPostButton.addEventListener("click", () => {
+  if (!openedPostId) {
     return;
   }
 
-  // 編集状態を解除します
-  editingPostId = null;
-  openedPostId = null;
-  postBeingEdited = false;
+  // 同じIDがある場合は、最後に読み込んだ最新データを使います
+  const postToEdit = [...savedPosts]
+    .reverse()
+    .find((post) => post.id === openedPostId);
 
-  // ページ間で一時保存した編集情報を削除します
-  sessionStorage.removeItem("caseme-editing-post-id");
-  sessionStorage.removeItem("caseme-editing-post-data");
+  if (!postToEdit) {
+    return;
+  }
 
-  // フォームを空にします
+  // ホームから編集する場合は投稿情報を一時保存して移動します
+  if (document.body.classList.contains("home-page")) {
+    sessionStorage.setItem(
+      "caseme-editing-post-id",
+      postToEdit.id
+    );
+
+    sessionStorage.setItem(
+      "caseme-editing-post-data",
+      JSON.stringify(postToEdit)
+    );
+
+    postDetailDialog.close();
+    window.location.href = "post.html#post-form";
+    return;
+  }
+
+  editingPostId = postToEdit.id;
+
+  // フォームを初期状態にします
   caseForm.reset();
   clearImagePreview();
 
-  // 編集中のタグを空にします
-  selectedFormTags = [];
+  // 基本情報をフォームへ戻します
+  caseTitleInput.value = postToEdit.title ?? "";
+  caseDescriptionInput.value =
+    postToEdit.description ?? "";
+
+  deviceTypeInput.value =
+    postToEdit.deviceType ?? "";
+
+  deviceNameInput.value =
+    postToEdit.deviceName ?? "";
+
+  // ケース情報をフォームへ戻します
+  caseNameInput.value = postToEdit.caseName ?? "";
+  caseShopInput.value = postToEdit.caseShop ?? "";
+
+  // ステッカー情報をフォームへ戻します
+  fillMultipleItemFields(
+    stickerFields,
+    postToEdit.stickers,
+    postToEdit.stickerName,
+    postToEdit.stickerShop,
+    ".sticker-name-input",
+    ".sticker-shop-input"
+  );
+
+  // キーホルダー情報をフォームへ戻します
+  fillMultipleItemFields(
+    keychainFields,
+    postToEdit.keychains,
+    postToEdit.keychainName,
+    postToEdit.keychainShop,
+    ".keychain-name-input",
+    ".keychain-shop-input"
+  );
+
+  otherItemsInput.value =
+    postToEdit.otherItems ?? "";
+
+  // ハッシュタグをフォームへ戻します
+  selectedFormTags = [...(postToEdit.tags ?? [])];
   displaySelectedFormTags();
 
-  // 新規投稿の状態へ戻します
-  caseImageInput.required = true;
-  submitButton.textContent = "投稿する";
-  cancelEditButton.hidden = true;
+  // 現在の投稿画像を表示します
+  if (postToEdit.imageUrl) {
+    imagePreview.src = postToEdit.imageUrl;
+    imagePreview.hidden = false;
+    imagePreviewMessage.hidden = true;
+  }
+
+  // 編集時は画像の選択を必須にしません
+  caseImageInput.required = false;
+
+  submitButton.textContent = "変更を保存";
+  cancelEditButton.hidden = false;
 
   formStatus.textContent =
-    "編集をキャンセルしました。";
+    "投稿を編集中です。画像を選び直すと変更できます。";
+
+  if (postDetailDialog.open) {
+    postDetailDialog.close();
+  }
+
+  document.querySelector("#post-form").scrollIntoView({
+    behavior: "smooth"
+  });
+
+  setTimeout(() => {
+    caseTitleInput.focus();
+  }, 500);
 });
 
 // =========================
