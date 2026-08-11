@@ -439,7 +439,12 @@ function addFilterTagButton(tag) {
 
 function savePostsToLocalStorage() {
   try {
-    const postsText = JSON.stringify(savedPosts);
+    // Supabase投稿はLocalStorageへ重複保存しません
+    const localPosts = savedPosts.filter(
+      (post) => post.storageType !== "supabase"
+    );
+
+    const postsText = JSON.stringify(localPosts);
     localStorage.setItem(storageKey, postsText);
     return true;
   } catch (error) {
@@ -465,11 +470,22 @@ function loadPostsFromLocalStorage() {
 
     // 読み込んだデータが配列でなければ空にします
     if (!Array.isArray(savedPosts)) {
-      savedPosts = [];
-      return;
-    }
+  savedPosts = [];
+  return;
+}
 
-    savedPosts.forEach((postData) => {
+// 過去にLocalStorageへ混ざったSupabase投稿を取り除きます
+savedPosts = savedPosts.filter(
+  (post) => post.storageType !== "supabase"
+);
+
+// LocalStorageの中身も整理します
+localStorage.setItem(
+  storageKey,
+  JSON.stringify(savedPosts)
+);
+
+savedPosts.forEach((postData) => {
       const postCard = createPostCard(postData);
       postGrid.prepend(postCard);
 
@@ -480,6 +496,42 @@ function loadPostsFromLocalStorage() {
   } catch (error) {
     console.error("保存された投稿を読み込めませんでした。", error);
     savedPosts = [];
+  }
+}
+
+// =========================
+// Supabaseの投稿を読み込んで表示
+// =========================
+
+async function displaySupabasePosts() {
+  // 投稿一覧がないページでは処理しません
+  if (!postGrid) {
+    return;
+  }
+
+  try {
+    const supabasePosts = await fetchSupabasePosts();
+
+    // 詳細表示・編集・削除でも使えるように配列へ追加
+    savedPosts.push(...supabasePosts);
+
+    supabasePosts.forEach((postData) => {
+      const postCard = createPostCard(postData);
+      postGrid.prepend(postCard);
+
+      postData.tags.forEach((tag) => {
+        addFilterTagButton(tag);
+      });
+    });
+
+    console.log(
+      `${supabasePosts.length}件のSupabase投稿を読み込みました。`
+    );
+  } catch (error) {
+    console.error(
+      "Supabaseの投稿を読み込めませんでした。",
+      error
+    );
   }
 }
 
@@ -717,23 +769,44 @@ const otherItems = otherItemsInput.value.trim();
       : null
   };
 
-  if (postBeingEdited) {
-    // 編集対象が配列の何番目にあるか確認します
-    const postIndex = savedPosts.findIndex(
-      (post) => post.id === editingPostId
-    );
+if (postBeingEdited) {
+  // 編集対象が配列の何番目にあるか確認します
+  const postIndex = savedPosts.findIndex(
+    (post) => post.id === editingPostId
+  );
 
-    const previousPostData = savedPosts[postIndex];
+  if (postIndex === -1) {
+    formStatus.textContent =
+      "編集する投稿が見つかりませんでした。";
+    return;
+  }
 
-    // 配列の投稿データを更新します
-    savedPosts[postIndex] = postData;
+  const previousPostData = savedPosts[postIndex];
+  let updatedPostData;
 
-    const saveSucceeded = savePostsToLocalStorage();
+  try {
+    formStatus.textContent = "投稿を更新しています…";
 
-    if (!saveSucceeded) {
-      // 保存に失敗した場合は変更前へ戻します
-      savedPosts[postIndex] = previousPostData;
-      return;
+    if (previousPostData.storageType === "supabase") {
+      // Supabaseの投稿を更新します
+      updatedPostData = await updateSupabasePost(
+        postData,
+        previousPostData
+      );
+
+      // 更新後のデータを画面管理用の配列へ入れます
+      savedPosts[postIndex] = updatedPostData;
+    } else {
+      // 従来のLocalStorage投稿を更新します
+      savedPosts[postIndex] = postData;
+      updatedPostData = postData;
+
+      const saveSucceeded = savePostsToLocalStorage();
+
+      if (!saveSucceeded) {
+        savedPosts[postIndex] = previousPostData;
+        return;
+      }
     }
 
     // 画面上の古いカードを新しいカードへ交換します
@@ -744,12 +817,14 @@ const otherItems = otherItemsInput.value.trim();
     });
 
     if (oldPostCard) {
-      const updatedPostCard = createPostCard(postData);
+      const updatedPostCard =
+        createPostCard(updatedPostData);
+
       oldPostCard.replaceWith(updatedPostCard);
     }
 
     // 新しく追加されたタグボタンを作ります
-    selectedFormTags.forEach((tag) => {
+    updatedPostData.tags.forEach((tag) => {
       addFilterTagButton(tag);
     });
 
@@ -757,26 +832,34 @@ const otherItems = otherItemsInput.value.trim();
     removeUnusedTagButtons();
 
     formStatus.textContent = "投稿を更新しました。";
-  } else {
-    // 新規投稿として保存します
-    savedPosts.push(postData);
+  } catch (error) {
+    console.error("投稿の更新に失敗しました。", error);
 
-    const saveSucceeded = savePostsToLocalStorage();
+    formStatus.textContent =
+      error.message || "投稿の更新に失敗しました。";
 
-    if (!saveSucceeded) {
-      savedPosts.pop();
-      return;
-    }
-
-    const newPostCard = createPostCard(postData);
-    postGrid.prepend(newPostCard);
-
-    selectedFormTags.forEach((tag) => {
-      addFilterTagButton(tag);
-    });
-
-    formStatus.textContent = "投稿を追加しました。";
+    return;
   }
+  
+  } else {
+  try {
+    formStatus.textContent = "投稿を保存しています…";
+
+    // 画像と投稿情報をSupabaseへ保存します
+    const createdPost = await createSupabasePost(postData);
+
+    formStatus.textContent = "投稿を保存しました。";
+
+    console.log("Supabaseに保存した投稿:", createdPost);
+  } catch (error) {
+    console.error("投稿の保存に失敗しました:", error);
+
+    formStatus.textContent =
+      error.message || "投稿の保存に失敗しました。";
+
+    return;
+  }
+}
 
   // フォームを新規投稿の状態へ戻します
   editingPostId = null;
@@ -811,6 +894,8 @@ document.querySelector("#posts").scrollIntoView({
 
 // 保存済みの投稿を読み込みます
 loadPostsFromLocalStorage();
+displaySupabasePosts();
+
 
 // 最初の投稿件数を表示します
 filterPosts("all");
@@ -1102,9 +1187,9 @@ postGrid.addEventListener("click", (event) => {
 
   const clickedPostId = clickedCard.dataset.postId;
 
-  const clickedPost = savedPosts.find(
-    (post) => post.id === clickedPostId
-  );
+  const clickedPost = [...savedPosts]
+  .reverse()
+  .find((post) => post.id === clickedPostId);
 
   if (!clickedPost) {
     return;
@@ -1160,7 +1245,7 @@ function removeUnusedTagButtons() {
   });
 }
 
-deletePostButton.addEventListener("click", () => {
+deletePostButton.addEventListener("click", async () => {
   if (!openedPostId) {
     return;
   }
@@ -1181,37 +1266,50 @@ deletePostButton.addEventListener("click", () => {
     return;
   }
 
-  // 配列から投稿を削除します
-  savedPosts = savedPosts.filter(
-    (post) => post.id !== openedPostId
-  );
+  try {
+    deletePostButton.disabled = true;
+    deletePostButton.textContent = "削除中…";
 
-  // LocalStorageの内容も更新します
-  savePostsToLocalStorage();
-
-  // 画面上の投稿カードを削除します
-  const postCards = document.querySelectorAll(
-    ".user-post-card"
-  );
-
-  postCards.forEach((card) => {
-    if (card.dataset.postId === openedPostId) {
-      card.remove();
+    // Supabase投稿の場合はデータベースと画像を削除します
+    if (postToDelete.storageType === "supabase") {
+      await deleteSupabasePost(postToDelete);
     }
-  });
 
-  openedPostId = null;
+    // 画面管理用の配列から削除します
+    savedPosts = savedPosts.filter(
+      (post) => post.id !== openedPostId
+    );
 
-  // 使用されなくなったタグボタンを整理します
-  removeUnusedTagButtons();
+    // LocalStorage投稿だけを保存し直します
+    savePostsToLocalStorage();
 
-  // 詳細画面を閉じます
-  postDetailDialog.close();
+    // 画面上の投稿カードを削除します
+    const postCards = document.querySelectorAll(
+      ".user-post-card"
+    );
 
-  // すべての投稿を表示し、件数を更新します
-  filterPosts("all");
+    postCards.forEach((card) => {
+      if (card.dataset.postId === openedPostId) {
+        card.remove();
+      }
+    });
 
-  formStatus.textContent = "投稿を削除しました。";
+    openedPostId = null;
+
+    removeUnusedTagButtons();
+    postDetailDialog.close();
+    filterPosts("all");
+
+    formStatus.textContent = "投稿を削除しました。";
+  } catch (error) {
+    console.error("投稿の削除に失敗しました。", error);
+
+    formStatus.textContent =
+      error.message || "投稿の削除に失敗しました。";
+  } finally {
+    deletePostButton.disabled = false;
+    deletePostButton.textContent = "削除";
+  }
 });
 
 // =========================
@@ -1223,9 +1321,9 @@ editPostButton.addEventListener("click", () => {
     return;
   }
 
-  const postToEdit = savedPosts.find(
-  (post) => post.id === openedPostId
-);
+const postToEdit = [...savedPosts]
+  .reverse()
+  .find((post) => post.id === openedPostId);
 
 if (!postToEdit) {
   return;
@@ -1233,9 +1331,16 @@ if (!postToEdit) {
 
 // ホームから編集する場合は投稿IDを一時保存して移動します
 if (document.body.classList.contains("home-page")) {
+  // 編集する投稿のIDを保存します
   sessionStorage.setItem(
     "caseme-editing-post-id",
     postToEdit.id
+  );
+
+  // Supabase投稿を含む投稿内容一式も保存します
+  sessionStorage.setItem(
+    "caseme-editing-post-data",
+    JSON.stringify(postToEdit)
   );
 
   window.location.href = "post.html#post-form";
@@ -1622,3 +1727,111 @@ function fillMultipleItemFields(
 
   updateItemRemoveButtons(container);
 }
+
+// =========================
+// 別ページで投稿内容を復元
+// =========================
+
+function restoreEditingPostFromSession() {
+  // 投稿フォームがないページでは処理しません
+  if (!caseForm) {
+    return;
+  }
+
+  const editingPostText = sessionStorage.getItem(
+    "caseme-editing-post-data"
+  );
+
+  if (!editingPostText) {
+    return;
+  }
+
+  try {
+    const postToEdit = JSON.parse(editingPostText);
+
+    // 編集中の投稿として設定します
+    editingPostId = postToEdit.id;
+    postBeingEdited = true;
+
+    // Supabase投稿の情報を配列にも追加します
+    const alreadyExists = savedPosts.some(
+      (post) => post.id === postToEdit.id
+    );
+
+    if (!alreadyExists) {
+      savedPosts.push(postToEdit);
+    }
+
+    // フォームを初期状態にします
+    caseForm.reset();
+    clearImagePreview();
+
+    // 基本情報をフォームへ戻します
+    caseTitleInput.value = postToEdit.title ?? "";
+    caseDescriptionInput.value =
+      postToEdit.description ?? "";
+
+    deviceTypeInput.value =
+      postToEdit.deviceType ?? "";
+
+    deviceNameInput.value =
+      postToEdit.deviceName ?? "";
+
+    // ケース情報を戻します
+    caseNameInput.value = postToEdit.caseName ?? "";
+    caseShopInput.value = postToEdit.caseShop ?? "";
+
+    // 複数のステッカー情報を戻します
+    fillMultipleItemFields(
+      stickerFields,
+      postToEdit.stickers,
+      postToEdit.stickerName,
+      postToEdit.stickerShop,
+      ".sticker-name-input",
+      ".sticker-shop-input"
+    );
+
+    // 複数のキーホルダー情報を戻します
+    fillMultipleItemFields(
+      keychainFields,
+      postToEdit.keychains,
+      postToEdit.keychainName,
+      postToEdit.keychainShop,
+      ".keychain-name-input",
+      ".keychain-shop-input"
+    );
+
+    otherItemsInput.value =
+      postToEdit.otherItems ?? "";
+
+    // ハッシュタグを戻します
+    selectedFormTags = [...(postToEdit.tags ?? [])];
+    displaySelectedFormTags();
+
+    // 現在の投稿画像を表示します
+    if (postToEdit.imageUrl) {
+      imagePreview.src = postToEdit.imageUrl;
+      imagePreview.hidden = false;
+      imagePreviewMessage.hidden = true;
+    }
+
+    // 編集時は画像の再選択を必須にしません
+    caseImageInput.required = false;
+
+    submitButton.textContent = "変更を保存";
+    cancelEditButton.hidden = false;
+
+    formStatus.textContent =
+      "投稿を編集中です。画像を選び直すと変更できます。";
+  } catch (error) {
+    console.error(
+      "編集する投稿情報を読み込めませんでした。",
+      error
+    );
+
+    formStatus.textContent =
+      "編集する投稿情報を読み込めませんでした。";
+  }
+}
+
+restoreEditingPostFromSession();
