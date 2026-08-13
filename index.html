@@ -599,8 +599,35 @@
         <!-- 詳細情報 -->
         <div class="detail-content">
           <div id="detail-tags" class="detail-tags"></div>
-
+          
           <h2 id="detail-title"></h2>
+
+          <!-- 投稿者プロフィール -->
+          <div
+            id="detail-author"
+            class="detail-author"
+            hidden
+          >
+          <div
+            id="detail-author-avatar"
+            class="detail-author-avatar"
+            aria-hidden="true"
+          >
+            C
+          </div>
+
+          <div class="detail-author-text">
+          <p
+            id="detail-author-name"
+            class="detail-author-name"
+          ></p>
+
+          <p
+            id="detail-author-username"
+            class="detail-author-username"
+          ></p>
+        </div>
+      </div>
 
           <p id="detail-device" class="detail-device"></p>
 
@@ -693,6 +720,8 @@
 <script src="supabase-posts.js"></script>
 
 <script src="supabase-favorites.js"></script>
+
+<script src="supabase-profiles.js"></script>
 
 <!-- ヘッダーのログイン状態を管理 -->
 <script src="auth-ui.js"></script>

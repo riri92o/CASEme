@@ -1025,6 +1025,68 @@ function formatMultipleItems(
     .join("\n");
 }
 
+// 投稿詳細に投稿者プロフィールを表示します
+async function displayDetailAuthor(postData) {
+  const detailAuthor = document.querySelector(
+    "#detail-author"
+  );
+
+  const detailAuthorAvatar = document.querySelector(
+    "#detail-author-avatar"
+  );
+
+  const detailAuthorName = document.querySelector(
+    "#detail-author-name"
+  );
+
+  const detailAuthorUsername = document.querySelector(
+    "#detail-author-username"
+  );
+
+  // 前に表示した投稿者情報を一度隠します
+  detailAuthor.hidden = true;
+  detailAuthorName.textContent = "";
+  detailAuthorUsername.textContent = "";
+
+  // LocalStorage投稿など、ユーザーIDがない投稿では表示しません
+  if (!postData.userId) {
+    return;
+  }
+
+  try {
+    const profile = await fetchProfileById(
+      postData.userId
+    );
+
+    if (!profile) {
+      return;
+    }
+
+    const displayName =
+      profile.displayName || "CASEmeユーザー";
+
+    detailAuthorName.textContent = displayName;
+
+    detailAuthorUsername.textContent =
+      profile.username
+        ? `@${profile.username}`
+        : "ユーザー名未設定";
+
+    detailAuthorAvatar.textContent =
+      displayName.charAt(0).toUpperCase();
+
+    detailAuthor.hidden = false;
+  } catch (error) {
+    // プロフィール取得に失敗しても投稿詳細は表示します
+    console.error(
+      "投稿者プロフィールを読み込めませんでした。",
+      error
+    );
+
+    detailAuthor.hidden = true;
+  }
+}
+
 async function openPostDetail(postData) {
     // 現在開いている投稿を記録します
     openedPostId = postData.id;
@@ -1147,7 +1209,10 @@ setDetailItem(
     "#detail-items-section"
   ).hidden = !hasAnyItemInformation;
 
-  // Supabase投稿は、投稿した本人だけ編集・削除できます
+// 投稿者プロフィールを表示します
+await displayDetailAuthor(postData);
+
+// Supabase投稿は、投稿した本人だけ編集・削除できます
 if (postData.storageType === "supabase") {
   const {
     data: { user }
