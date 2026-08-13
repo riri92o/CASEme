@@ -2277,6 +2277,9 @@ button {
 ========================= */
 
 .detail-author {
+
+  color: inherit;
+  text-decoration: none;
   margin: 18px 0 22px;
   padding: 14px 16px;
   display: flex;
@@ -2285,6 +2288,11 @@ button {
   border: 1px solid #e4e8e5;
   border-radius: 14px;
   background: #f8faf8;
+}
+
+.detail-author:hover {
+  border-color: #9aafa0;
+  background: #f2f6f3;
 }
 
 .detail-author[hidden] {
@@ -2327,4 +2335,224 @@ button {
   color: #7b827c;
   font-size: 12px;
   line-height: 1.4;
+}
+
+/* =========================
+   公開プロフィール画面
+========================= */
+
+.user-page {
+  min-height: 100vh;
+  margin: 0;
+  color: #171917;
+  background:
+    linear-gradient(
+      180deg,
+      #f3f7f4 0,
+      #ffffff 380px
+    );
+}
+
+.user-main {
+  width: min(1080px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 72px 0 100px;
+}
+
+.user-profile-card {
+  padding: 42px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  border: 1px solid #e2e7e3;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 20px 60px rgba(28, 45, 34, 0.07);
+}
+
+.user-avatar {
+  width: 104px;
+  height: 104px;
+  flex: 0 0 104px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #ffffff;
+  background:
+    linear-gradient(
+      145deg,
+      #607d69,
+      #91ad9a
+    );
+  font-size: 36px;
+  font-weight: 750;
+  text-transform: uppercase;
+  box-shadow: 0 12px 30px rgba(63, 93, 72, 0.2);
+}
+
+.user-profile-content {
+  min-width: 0;
+}
+
+.user-profile-content h1 {
+  margin: 0;
+  font-size: clamp(28px, 5vw, 42px);
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+}
+
+.user-username {
+  margin: 7px 0 0;
+  color: #718077;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.user-bio {
+  max-width: 620px;
+  margin: 18px 0 0;
+  color: #606761;
+  font-size: 15px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.user-posts-section {
+  margin-top: 70px;
+}
+
+.user-posts-heading {
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.user-posts-heading h2 {
+  margin: 0;
+  font-size: clamp(24px, 4vw, 32px);
+  line-height: 1.3;
+  letter-spacing: -0.03em;
+}
+
+#user-post-count {
+  margin: 0;
+  color: #788079;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.user-post-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.user-post-card {
+  border: 1px solid #e3e7e4;
+  border-radius: 18px;
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(28, 45, 34, 0.05);
+}
+
+.user-post-image {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  display: block;
+  object-fit: cover;
+  background: #eff2ef;
+}
+
+.user-post-content {
+  padding: 16px;
+}
+
+.user-post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.user-post-tags span {
+  color: #67806f;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.user-post-title {
+  margin: 10px 0 0;
+  color: #202420;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.user-post-device {
+  margin: 7px 0 0;
+  color: #858b86;
+  font-size: 12px;
+}
+
+.user-page-status {
+  margin: 28px 0 0;
+  color: #717872;
+  font-size: 14px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* =========================
+   公開プロフィール・スマホ
+========================= */
+
+@media (max-width: 760px) {
+  .user-main {
+    width: min(100% - 28px, 1080px);
+    padding: 38px 0 70px;
+  }
+
+  .user-profile-card {
+    padding: 28px 22px;
+    align-items: flex-start;
+    gap: 18px;
+    border-radius: 20px;
+  }
+
+  .user-avatar {
+    width: 72px;
+    height: 72px;
+    flex-basis: 72px;
+    font-size: 26px;
+  }
+
+  .user-bio {
+    margin-top: 14px;
+    font-size: 14px;
+  }
+
+  .user-posts-section {
+    margin-top: 50px;
+  }
+
+  .user-post-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .user-post-content {
+    padding: 13px;
+  }
+}
+
+@media (max-width: 420px) {
+  .user-profile-card {
+    flex-direction: column;
+  }
+
+  .user-post-grid {
+    grid-template-columns: 1fr;
+  }
 }

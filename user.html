@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="CASEmeユーザーの公開プロフィールです。"
+  >
+
+  <title>ユーザープロフィール | CASEme</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="user-page">
+  <header class="profile-header">
+    <div class="profile-header-inner">
+      <a
+        href="index.html"
+        class="profile-logo"
+        aria-label="CASEmeのホームへ戻る"
+      >
+        CASEme
+      </a>
+
+      <nav
+        class="profile-navigation"
+        aria-label="メインメニュー"
+      >
+        <a href="index.html">ホーム</a>
+        <a href="post.html">投稿する</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="user-main">
+    <section
+      id="user-profile-card"
+      class="user-profile-card"
+      aria-labelledby="user-display-name"
+    >
+      <div
+        id="user-avatar"
+        class="user-avatar"
+        aria-hidden="true"
+      >
+        C
+      </div>
+
+      <div class="user-profile-content">
+        <p class="profile-eyebrow">
+          CASEme PROFILE
+        </p>
+
+        <h1 id="user-display-name">
+          プロフィールを読み込んでいます…
+        </h1>
+
+        <p
+          id="user-username"
+          class="user-username"
+        ></p>
+
+        <p
+          id="user-bio"
+          class="user-bio"
+        ></p>
+      </div>
+    </section>
+
+    <section
+      class="user-posts-section"
+      aria-labelledby="user-posts-heading"
+    >
+      <div class="user-posts-heading">
+        <div>
+          <p class="profile-eyebrow">
+            CASE COLLECTION
+          </p>
+
+          <h2 id="user-posts-heading">
+            このユーザーの投稿
+          </h2>
+        </div>
+
+        <p id="user-post-count">
+          0件
+        </p>
+      </div>
+
+      <div
+        id="user-post-grid"
+        class="user-post-grid"
+      ></div>
+
+      <p
+        id="user-page-status"
+        class="user-page-status"
+        role="status"
+        aria-live="polite"
+      ></p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase-posts.js"></script>
+  <script src="supabase-profiles.js"></script>
+  <script src="user-profile.js"></script>
+  
+</body>
+</html>

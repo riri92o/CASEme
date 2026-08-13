@@ -1072,10 +1072,14 @@ async function displayDetailAuthor(postData) {
         ? `@${profile.username}`
         : "ユーザー名未設定";
 
-    detailAuthorAvatar.textContent =
-      displayName.charAt(0).toUpperCase();
+   detailAuthorAvatar.textContent =
+  displayName.charAt(0).toUpperCase();
 
-    detailAuthor.hidden = false;
+detailAuthor.href =
+  `user.html?id=${encodeURIComponent(postData.userId)}`;
+
+detailAuthor.hidden = false;
+
   } catch (error) {
     // プロフィール取得に失敗しても投稿詳細は表示します
     console.error(
