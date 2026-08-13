@@ -510,11 +510,42 @@ async function displaySupabasePosts() {
   }
 
   try {
+    // Supabaseから投稿を取得します
     const supabasePosts = await fetchSupabasePosts();
 
-    // 詳細表示・編集・削除でも使えるように配列へ追加
+    let favoritePostIds = [];
+
+    try {
+      // ログイン中のユーザーのお気に入りを取得します
+      favoritePostIds = await fetchFavoritePostIds();
+    } catch (favoriteError) {
+      // お気に入り取得に失敗しても投稿一覧は表示します
+      console.error(
+        "お気に入り情報を読み込めませんでした。",
+        favoriteError
+      );
+    }
+
+    const favoritePostIdSet = new Set(
+      favoritePostIds
+    );
+
+    // 以前読み込んだSupabase投稿があれば配列から外します
+    savedPosts = savedPosts.filter(
+      (post) => post.storageType !== "supabase"
+    );
+
+    // 各投稿へお気に入り状態を設定します
+    supabasePosts.forEach((postData) => {
+      postData.isLiked = favoritePostIdSet.has(
+        postData.id
+      );
+    });
+
+    // 詳細表示・編集・削除でも使えるように配列へ追加します
     savedPosts.push(...supabasePosts);
 
+    // 投稿カードを画面へ表示します
     supabasePosts.forEach((postData) => {
       const postCard = createPostCard(postData);
       postGrid.prepend(postCard);
@@ -525,7 +556,8 @@ async function displaySupabasePosts() {
     });
 
     console.log(
-      `${supabasePosts.length}件のSupabase投稿を読み込みました。`
+      `${supabasePosts.length}件のSupabase投稿と、` +
+      `${favoritePostIds.length}件のお気に入りを読み込みました。`
     );
   } catch (error) {
     console.error(
@@ -1136,51 +1168,83 @@ if (postData.storageType === "supabase") {
 }
 
 // お気に入り状態を切り替えます
-function toggleFavorite(postId, likeButton) {
-  const targetPost = savedPosts.find(
-    (post) => post.id === postId
-  );
+async function toggleFavorite(postId, likeButton) {
+  // 同じIDがある場合は最新の投稿データを使います
+  const targetPost = [...savedPosts]
+    .reverse()
+    .find((post) => post.id === postId);
 
   if (!targetPost) {
     return;
   }
 
-  const previousLikedState = targetPost.isLiked === true;
+  const previousLikedState =
+    targetPost.isLiked === true;
 
-  // 現在と反対の状態にします
-  targetPost.isLiked = !previousLikedState;
+  try {
+    // 連続クリックを防ぎます
+    likeButton.disabled = true;
 
-  const saveSucceeded = savePostsToLocalStorage();
+    if (targetPost.storageType === "supabase") {
+      if (previousLikedState) {
+        // お気に入り登録済みなら解除します
+        await removeSupabaseFavorite(postId);
+      } else {
+        // 未登録ならお気に入りへ追加します
+        await addSupabaseFavorite(postId);
+      }
+    }
 
-  if (!saveSucceeded) {
-    // 保存に失敗した場合は元の状態へ戻します
-    targetPost.isLiked = previousLikedState;
-    return;
-  }
+    // Supabaseへの保存成功後に画面上の状態を変更します
+    targetPost.isLiked = !previousLikedState;
 
-  if (targetPost.isLiked) {
-    likeButton.classList.add("active");
-    likeButton.textContent = "♥";
-    likeButton.setAttribute(
-      "aria-label",
-      "お気に入りから削除"
+    // LocalStorage投稿の場合は従来どおり保存します
+    if (targetPost.storageType !== "supabase") {
+      const saveSucceeded =
+        savePostsToLocalStorage();
+
+      if (!saveSucceeded) {
+        targetPost.isLiked = previousLikedState;
+        return;
+      }
+    }
+
+    if (targetPost.isLiked) {
+      likeButton.classList.add("active");
+      likeButton.textContent = "♥";
+      likeButton.setAttribute(
+        "aria-label",
+        "お気に入りから削除"
+      );
+    } else {
+      likeButton.classList.remove("active");
+      likeButton.textContent = "♡";
+      likeButton.setAttribute(
+        "aria-label",
+        "お気に入りに追加"
+      );
+    }
+
+    // お気に入り一覧を表示中なら一覧を更新します
+    if (isFavoriteFilterActive) {
+      filterPosts(selectedFilterTag);
+    }
+  } catch (error) {
+    console.error(
+      "お気に入りの変更に失敗しました。",
+      error
     );
-  } else {
-    likeButton.classList.remove("active");
-    likeButton.textContent = "♡";
-    likeButton.setAttribute(
-      "aria-label",
-      "お気に入りに追加"
-    );
-  }
 
-    // お気に入り一覧の表示中なら一覧を更新します
-  if (isFavoriteFilterActive) {
-    filterPosts(selectedFilterTag);
+    window.alert(
+      error.message ||
+      "お気に入りの変更に失敗しました。"
+    );
+  } finally {
+    likeButton.disabled = false;
   }
 }
 
-// 投稿一覧内のカードが押されたとき
+
 // 投稿一覧内がクリックされたとき
 postGrid.addEventListener("click", (event) => {
   // ハートが押された場合
