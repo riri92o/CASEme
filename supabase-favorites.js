@@ -2,16 +2,28 @@
 // Supabase お気に入り管理
 // =========================
 
-// ログイン中のユーザーがお気に入りにした投稿IDを取得します
-async function fetchFavoritePostIds() {
+// ログイン中のユーザー情報を取得します
+async function getFavoriteUser() {
   const {
     data: { user },
-    error: userError
+    error
   } = await caseMeSupabase.auth.getUser();
 
-  if (userError) {
-    throw userError;
+  // 未ログイン時はSupabaseの英語エラーを表示しません
+  if (!user) {
+    return null;
   }
+
+  if (error) {
+    throw error;
+  }
+
+  return user;
+}
+
+// ログイン中のユーザーがお気に入りにした投稿IDを取得します
+async function fetchFavoritePostIds() {
+  const user = await getFavoriteUser();
 
   // 未ログインの場合は空の配列を返します
   if (!user) {
@@ -34,14 +46,7 @@ async function fetchFavoritePostIds() {
 
 // 投稿をお気に入りへ追加します
 async function addSupabaseFavorite(postId) {
-  const {
-    data: { user },
-    error: userError
-  } = await caseMeSupabase.auth.getUser();
-
-  if (userError) {
-    throw userError;
-  }
+  const user = await getFavoriteUser();
 
   if (!user) {
     throw new Error(
@@ -63,14 +68,7 @@ async function addSupabaseFavorite(postId) {
 
 // 投稿をお気に入りから削除します
 async function removeSupabaseFavorite(postId) {
-  const {
-    data: { user },
-    error: userError
-  } = await caseMeSupabase.auth.getUser();
-
-  if (userError) {
-    throw userError;
-  }
+  const user = await getFavoriteUser();
 
   if (!user) {
     throw new Error(
