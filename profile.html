@@ -53,13 +53,15 @@
       aria-labelledby="profile-heading"
     >
       <div class="profile-card-heading">
-        <div
-          id="profile-avatar-preview"
-          class="profile-avatar-preview"
-          aria-hidden="true"
-        >
-          C
-        </div>
+       <button
+        type="button"
+        id="profile-avatar-preview"
+        class="profile-avatar-preview"
+        aria-label="プロフィール画像を変更"
+        title="プロフィール画像を変更"
+      >
+        C
+      </button>
 
         <div>
           <p class="profile-eyebrow">
@@ -77,6 +79,32 @@
       </div>
 
       <form id="profile-form" class="profile-form">
+
+        <!-- プロフィール画像 -->
+<div class="profile-form-field">
+  <label for="profile-avatar-input">
+    プロフィール画像
+  </label>
+
+  <input
+    type="file"
+    id="profile-avatar-input"
+    <input
+      type="file"
+      id="profile-avatar-input"
+      hidden
+      name="avatar"
+      accept="image/jpeg,image/png,image/webp"
+    >
+    name="avatar"
+    accept="image/jpeg,image/png,image/webp"
+  >
+
+  <p class="profile-field-note">
+    JPEG・PNG・WebP形式の画像を選択できます。
+    本人が使用する権利を持つ画像を設定してください。
+  </p>
+</div>
         <div class="profile-form-field">
           <label for="profile-display-name">
             表示名

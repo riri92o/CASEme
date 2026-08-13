@@ -45,7 +45,9 @@ async function fetchCurrentProfile() {
     username: data.username ?? "",
     displayName: data.display_name ?? "",
     bio: data.bio ?? "",
-    avatarUrl: data.avatar_url ?? "",
+    avatarUrl: getProfileAvatarPublicUrl(
+      data.avatar_url
+    ),
     createdAt: data.created_at,
     updatedAt: data.updated_at
   };
@@ -78,7 +80,9 @@ async function fetchProfileById(userId) {
     username: data.username ?? "",
     displayName: data.display_name ?? "",
     bio: data.bio ?? "",
-    avatarUrl: data.avatar_url ?? "",
+    avatarUrl: getProfileAvatarPublicUrl(
+      data.avatar_url
+    ),    
     createdAt: data.created_at,
     updatedAt: data.updated_at
   };
@@ -152,8 +156,158 @@ async function updateCurrentProfile(profileData) {
     username: data.username ?? "",
     displayName: data.display_name ?? "",
     bio: data.bio ?? "",
-    avatarUrl: data.avatar_url ?? "",
-    createdAt: data.created_at,
+    avatarUrl: getProfileAvatarPublicUrl(
+      data.avatar_url
+    ),    createdAt: data.created_at,
     updatedAt: data.updated_at
+  };
+}
+
+// =========================
+// プロフィール画像
+// =========================
+
+// Storage内の画像パスから公開URLを作ります
+function getProfileAvatarPublicUrl(imagePath) {
+  if (!imagePath) {
+    return "";
+  }
+
+  // すでにURLの場合はそのまま返します
+  if (
+    imagePath.startsWith("http://") ||
+    imagePath.startsWith("https://")
+  ) {
+    return imagePath;
+  }
+
+  const { data } = caseMeSupabase.storage
+    .from("profile-images")
+    .getPublicUrl(imagePath);
+
+  return data.publicUrl;
+}
+
+// ログイン中のユーザーのプロフィール画像を保存します
+async function uploadCurrentProfileAvatar(imageFile) {
+  const user = await getCurrentProfileUser();
+
+  if (!user) {
+    throw new Error(
+      "プロフィール画像を変更するにはログインが必要です。"
+    );
+  }
+
+  if (!imageFile) {
+    throw new Error(
+      "プロフィール画像を選択してください。"
+    );
+  }
+
+  const allowedImageTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ];
+
+  if (!allowedImageTypes.includes(imageFile.type)) {
+    throw new Error(
+      "JPEG・PNG・WebP形式の画像を選択してください。"
+    );
+  }
+
+  if (imageFile.size > 2 * 1024 * 1024) {
+    throw new Error(
+      "プロフィール画像は2MB以下にしてください。"
+    );
+  }
+
+  const extensionByType = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp"
+  };
+
+  const fileExtension =
+    extensionByType[imageFile.type];
+
+  const imagePath =
+    `${user.id}/avatar-${Date.now()}.${fileExtension}`;
+
+  // 現在登録されている画像パスを取得します
+  const {
+    data: currentProfile,
+    error: profileReadError
+  } = await caseMeSupabase
+    .from("profiles")
+    .select("avatar_url")
+    .eq("id", user.id)
+    .single();
+
+  if (profileReadError) {
+    throw profileReadError;
+  }
+
+  const previousImagePath =
+    currentProfile.avatar_url ?? "";
+
+  // 新しい画像をStorageへ保存します
+  const { error: uploadError } =
+    await caseMeSupabase.storage
+      .from("profile-images")
+      .upload(imagePath, imageFile, {
+        cacheControl: "3600",
+        upsert: false,
+        contentType: imageFile.type
+      });
+
+  if (uploadError) {
+    throw uploadError;
+  }
+
+  // profilesテーブルへ新しい画像パスを保存します
+  const { error: updateError } =
+    await caseMeSupabase
+      .from("profiles")
+      .update({
+        avatar_url: imagePath,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", user.id);
+
+  if (updateError) {
+    // DB更新に失敗した場合は、新しく保存した画像を片付けます
+    await caseMeSupabase.storage
+      .from("profile-images")
+      .remove([imagePath]);
+
+    throw updateError;
+  }
+
+  // 以前の画像があれば、更新成功後に削除します
+  if (
+    previousImagePath &&
+    previousImagePath !== imagePath &&
+    !previousImagePath.startsWith("http://") &&
+    !previousImagePath.startsWith("https://")
+  ) {
+    const { error: removeError } =
+      await caseMeSupabase.storage
+        .from("profile-images")
+        .remove([previousImagePath]);
+
+    // 古い画像の削除失敗だけでは保存を失敗扱いにしません
+    if (removeError) {
+      console.error(
+        "以前のプロフィール画像を削除できませんでした。",
+        removeError
+      );
+    }
+  }
+
+  return {
+    imagePath,
+    imageUrl:
+      getProfileAvatarPublicUrl(imagePath)
   };
 }

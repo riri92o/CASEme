@@ -38,6 +38,10 @@ const profileLogoutButton = document.querySelector(
   "#profile-logout-button"
 );
 
+const profileAvatarInput = document.querySelector(
+  "#profile-avatar-input"
+);
+
 // 表示名の最初の1文字を仮アイコンに表示します
 function updateProfileAvatarLetter() {
   const displayName =
@@ -84,10 +88,27 @@ async function loadProfilePage() {
       profile.username;
 
     profileBioInput.value =
-      profile.bio;
+  profile.bio;
 
-    updateProfileAvatarLetter();
-    updateProfileBioCount();
+// 保存済みのプロフィール画像を表示します
+if (profile.avatarUrl) {
+  profileAvatarPreview.style.backgroundImage =
+    `url("${profile.avatarUrl}")`;
+
+  profileAvatarPreview.classList.add(
+    "has-image"
+  );
+} else {
+  // 画像未設定の場合は表示名の1文字を使います
+  profileAvatarPreview.style.backgroundImage = "";
+
+  profileAvatarPreview.classList.remove(
+    "has-image"
+  );
+}
+
+updateProfileAvatarLetter();
+updateProfileBioCount();
 
     profileStatus.textContent = "";
   } catch (error) {
@@ -101,6 +122,72 @@ async function loadProfilePage() {
       "プロフィールを読み込めませんでした。";
   }
 }
+
+// 丸いアイコンを押したら画像選択画面を開きます
+profileAvatarPreview.addEventListener(
+  "click",
+  () => {
+    profileAvatarInput.click();
+  }
+);
+
+// 選択したプロフィール画像をプレビューします
+profileAvatarInput.addEventListener(
+  "change",
+  () => {
+    const selectedImage =
+      profileAvatarInput.files[0];
+
+    if (!selectedImage) {
+      profileAvatarPreview.classList.remove(
+        "has-image"
+      );
+
+      profileAvatarPreview.style.backgroundImage =
+        "";
+
+      updateProfileAvatarLetter();
+      return;
+    }
+
+    const allowedImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ];
+
+    if (
+      !allowedImageTypes.includes(selectedImage.type)
+    ) {
+      profileStatus.textContent =
+        "JPEG・PNG・WebP形式の画像を選択してください。";
+
+      profileAvatarInput.value = "";
+      return;
+    }
+
+    if (selectedImage.size > 2 * 1024 * 1024) {
+      profileStatus.textContent =
+        "プロフィール画像は2MB以下にしてください。";
+
+      profileAvatarInput.value = "";
+      return;
+    }
+
+    const previewUrl =
+      URL.createObjectURL(selectedImage);
+
+    profileAvatarPreview.style.backgroundImage =
+      `url("${previewUrl}")`;
+
+    profileAvatarPreview.classList.add(
+      "has-image"
+    );
+
+    profileStatus.textContent =
+      "画像を選択しました。まだ保存されていません。";
+  }
+);
 
 // 表示名が変更されたら仮アイコンも変更します
 profileDisplayNameInput.addEventListener(
@@ -128,29 +215,50 @@ profileForm.addEventListener(
       profileStatus.textContent = "";
 
       const updatedProfile =
-        await updateCurrentProfile({
-          displayName:
-            profileDisplayNameInput.value,
-          username:
-            profileUsernameInput.value,
-          bio:
-            profileBioInput.value
-        });
+  await updateCurrentProfile({
+    displayName:
+      profileDisplayNameInput.value,
+    username:
+      profileUsernameInput.value,
+    bio:
+      profileBioInput.value
+  });
 
-      profileDisplayNameInput.value =
-        updatedProfile.displayName;
+profileDisplayNameInput.value =
+  updatedProfile.displayName;
 
-      profileUsernameInput.value =
-        updatedProfile.username;
+profileUsernameInput.value =
+  updatedProfile.username;
 
-      profileBioInput.value =
-        updatedProfile.bio;
+profileBioInput.value =
+  updatedProfile.bio;
 
-      updateProfileAvatarLetter();
-      updateProfileBioCount();
+// 新しい画像が選ばれていればSupabaseへ保存します
+const selectedAvatar =
+  profileAvatarInput.files[0];
 
-      profileStatus.textContent =
-        "プロフィールを保存しました。";
+if (selectedAvatar) {
+  const uploadedAvatar =
+    await uploadCurrentProfileAvatar(
+      selectedAvatar
+    );
+
+  profileAvatarPreview.style.backgroundImage =
+    `url("${uploadedAvatar.imageUrl}")`;
+
+  profileAvatarPreview.classList.add(
+    "has-image"
+  );
+
+  // 保存済みなのでファイル選択欄を空にします
+  profileAvatarInput.value = "";
+}
+
+updateProfileAvatarLetter();
+updateProfileBioCount();
+
+profileStatus.textContent =
+  "プロフィールを保存しました。";
     } catch (error) {
       console.error(
         "プロフィールを保存できませんでした。",

@@ -2556,3 +2556,42 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* プロフィール画像のプレビュー中 */
+.profile-avatar-preview.has-image {
+  color: transparent;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+#profile-avatar-input {
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+#profile-avatar-input::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 13px;
+  border: 0;
+  border-radius: 999px;
+  color: #314538;
+  background: #e9f0eb;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+#profile-avatar-input::file-selector-button:hover {
+  background: #dce8df;
+}
+
+/* 保存済みプロフィール画像 */
+.detail-author-avatar.has-image,
+.user-avatar.has-image {
+  color: transparent;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}

@@ -1072,8 +1072,24 @@ async function displayDetailAuthor(postData) {
         ? `@${profile.username}`
         : "ユーザー名未設定";
 
-   detailAuthorAvatar.textContent =
+ detailAuthorAvatar.textContent =
   displayName.charAt(0).toUpperCase();
+
+// プロフィール画像があれば表示します
+if (profile.avatarUrl) {
+  detailAuthorAvatar.style.backgroundImage =
+    `url("${profile.avatarUrl}")`;
+
+  detailAuthorAvatar.classList.add(
+    "has-image"
+  );
+} else {
+  detailAuthorAvatar.style.backgroundImage = "";
+
+  detailAuthorAvatar.classList.remove(
+    "has-image"
+  );
+}
 
 detailAuthor.href =
   `user.html?id=${encodeURIComponent(postData.userId)}`;

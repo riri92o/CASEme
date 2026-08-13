@@ -144,7 +144,18 @@ async function loadPublicProfile() {
       "自己紹介はまだ設定されていません。";
 
     userAvatar.textContent =
-      displayName.charAt(0).toUpperCase();
+  displayName.charAt(0).toUpperCase();
+
+// プロフィール画像があれば表示します
+if (profile.avatarUrl) {
+  userAvatar.style.backgroundImage =
+    `url("${profile.avatarUrl}")`;
+
+  userAvatar.classList.add("has-image");
+} else {
+  userAvatar.style.backgroundImage = "";
+  userAvatar.classList.remove("has-image");
+}
 
     // このユーザーが投稿したものだけに絞ります
     const userPosts = allPosts.filter(
