@@ -45,6 +45,53 @@
         プロフィール
         </a>
 
+        <div
+  id="header-profile-menu"
+  class="header-profile-menu"
+  hidden
+>
+  <button
+    type="button"
+    id="header-profile-button"
+    class="header-profile-button"
+    aria-label="プロフィールメニューを開く"
+    aria-expanded="false"
+  >
+    <span
+      id="header-profile-avatar"
+      class="header-profile-avatar"
+      aria-hidden="true"
+    >
+      C
+    </span>
+  </button>
+
+  <div
+    id="header-profile-dropdown"
+    class="header-profile-dropdown"
+    hidden
+  >
+    <a
+      id="header-my-profile-link"
+      href="user.html"
+    >
+      自分のプロフィール
+    </a>
+
+    <a href="profile.html">
+      プロフィール変更
+    </a>
+
+    <button
+      type="button"
+      id="header-menu-logout-button"
+      class="header-menu-logout-button"
+    >
+      ログアウト
+    </button>
+  </div>
+</div>
+
         <a
           href="auth.html"
           id="auth-link"
@@ -732,6 +779,8 @@
 
 <!-- Supabaseの投稿処理 -->
 <script src="supabase-posts.js"></script>
+
+<script src="supabase-profiles.js"></script>
 
 <!-- ヘッダーのログイン状態を管理 -->
 <script src="auth-ui.js"></script>

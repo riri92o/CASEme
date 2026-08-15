@@ -2595,3 +2595,118 @@ button {
   background-size: cover;
   background-repeat: no-repeat;
 }
+
+/* =========================
+   ヘッダーのプロフィールメニュー
+========================= */
+
+.header-profile-menu {
+  position: relative;
+}
+
+.header-profile-menu[hidden],
+.header-profile-dropdown[hidden] {
+  display: none;
+}
+
+.header-profile-button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #dce4de;
+  border-radius: 50%;
+  background: #eef3ef;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.header-profile-button:hover {
+  transform: translateY(-1px);
+  border-color: #819b89;
+}
+
+.header-profile-button:focus-visible {
+  outline: 3px solid rgba(95, 126, 105, 0.25);
+  outline-offset: 2px;
+}
+
+.header-profile-avatar {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background:
+    linear-gradient(145deg, #607d69, #91ad9a);
+  background-position: center;
+  background-size: cover;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.header-profile-avatar.has-image {
+  color: transparent;
+}
+
+.header-profile-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 50;
+  min-width: 190px;
+  padding: 8px;
+  border: 1px solid #e0e5e1;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 16px 45px rgba(28, 45, 34, 0.14);
+}
+
+.header-profile-dropdown a {
+  display: block;
+  padding: 11px 12px;
+  border-radius: 9px;
+  color: #202421;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.header-profile-dropdown a:hover {
+  color: #415c49;
+  background: #f0f4f1;
+}
+
+/* プロフィールメニュー内のログアウト */
+
+.header-menu-logout-button {
+  width: 100%;
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 9px;
+  color: #b04747;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.header-menu-logout-button:hover {
+  background: #faf0f0;
+}
+
+.header-menu-logout-button:focus-visible {
+  outline: 2px solid rgba(176, 71, 71, 0.25);
+  outline-offset: -2px;
+}
+
+/* 古いログアウトボタンを非表示 */
+
+.header-nav > .logout-button {
+  display: none;
+}
