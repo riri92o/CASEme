@@ -71,6 +71,39 @@
           id="user-bio"
           class="user-bio"
         ></p>
+
+        <div class="user-follow-area">
+  <div
+    class="user-follow-stats"
+    aria-label="フォロー情報"
+  >
+    <div class="user-follow-stat">
+      <strong id="user-following-count">
+        0
+      </strong>
+
+      <span>フォロー中</span>
+    </div>
+
+    <div class="user-follow-stat">
+      <strong id="user-follower-count">
+        0
+      </strong>
+
+      <span>フォロワー</span>
+    </div>
+  </div>
+
+  <button
+    type="button"
+    id="user-follow-button"
+    class="user-follow-button"
+    hidden
+  >
+    フォローする
+  </button>
+</div>
+
       </div>
     </section>
 
@@ -112,6 +145,7 @@
   <script src="supabase-config.js"></script>
   <script src="supabase-posts.js"></script>
   <script src="supabase-profiles.js"></script>
+  <script src="supabase-follows.js"></script>
   <script src="user-profile.js"></script>
 
 </body>
