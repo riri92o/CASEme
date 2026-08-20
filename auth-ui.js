@@ -142,6 +142,11 @@ async function updateAuthDisplay() {
     headerProfileMenu.hidden = !isLoggedIn;
   }
 
+  const headerNotificationMenu = document.querySelector("#header-notification-menu");
+  if (headerNotificationMenu) {
+    headerNotificationMenu.hidden = !isLoggedIn;
+  }
+
   if (isLoggedIn) {
     await displayHeaderProfile();
   } else {

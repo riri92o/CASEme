@@ -126,3 +126,79 @@ async function fetchFollowCounts(userId) {
     followingCount: followingResult.count ?? 0
   };
 }
+
+// ユーザーIDの配列から公開プロフィールを取得します
+async function fetchFollowProfilesByIds(userIds) {
+  if (!Array.isArray(userIds) || userIds.length === 0) {
+    return [];
+  }
+
+  const { data, error } = await caseMeSupabase
+    .from("profiles")
+    .select(
+      "id, username, display_name, bio, avatar_url"
+    )
+    .in("id", userIds);
+
+  if (error) {
+    throw error;
+  }
+
+  const profileMap = new Map(
+    (data ?? []).map((profile) => {
+      return [profile.id, {
+        id: profile.id,
+        username: profile.username ?? "",
+        displayName:
+          profile.display_name ?? "CASEmeユーザー",
+        bio: profile.bio ?? "",
+        avatarUrl: getProfileAvatarPublicUrl(
+          profile.avatar_url
+        )
+      }];
+    })
+  );
+
+  // followsテーブルの並び順を保って返します
+  return userIds
+    .map((userId) => profileMap.get(userId))
+    .filter(Boolean);
+}
+
+// 指定ユーザーがフォローしている人を取得します
+async function fetchFollowingProfiles(userId) {
+  const { data, error } = await caseMeSupabase
+    .from("follows")
+    .select("following_id, created_at")
+    .eq("follower_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  const userIds = (data ?? []).map(
+    (follow) => follow.following_id
+  );
+
+  return fetchFollowProfilesByIds(userIds);
+}
+
+// 指定ユーザーをフォローしている人を取得します
+async function fetchFollowerProfiles(userId) {
+  const { data, error } = await caseMeSupabase
+    .from("follows")
+    .select("follower_id, created_at")
+    .eq("following_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  const userIds = (data ?? []).map(
+    (follow) => follow.follower_id
+  );
+
+  return fetchFollowProfilesByIds(userIds);
+}

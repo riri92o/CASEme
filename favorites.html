@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="お気に入りしたスマホケースの投稿一覧です。">
+  <title>お気に入り一覧 | CASEme</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="favorites-page">
+  <!-- ページ上部のヘッダー -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo" aria-label="CASEme ホーム">
+        CASE<span>me</span>
+      </a>
+
+      <nav class="header-nav" aria-label="メインメニュー">
+        <a href="index.html">ホーム</a>
+        <a href="post.html">投稿する</a>
+      </nav>
+
+      <!-- ログイン時のメニュー（ヘッダー右側） -->
+      <div id="header-user-menu" class="header-user-menu">
+        <!-- ベルマーク（通知ボタン） -->
+        <div id="header-notification-menu" class="header-notification-menu" hidden>
+          <button
+            type="button"
+            id="header-notification-button"
+            class="header-notification-button"
+            aria-label="通知メニューを開く"
+            aria-expanded="false"
+          >
+            <!-- ベルのシンプルなSVGラインアイコン -->
+            <svg class="notification-bell-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+            </svg>
+            <span id="notification-badge" class="notification-badge" hidden>0</span>
+          </button>
+
+          <!-- 通知ドロップダウン -->
+          <div id="notification-dropdown" class="notification-dropdown">
+            <div class="notification-header">
+              <h3>通知</h3>
+              <button type="button" id="notification-clear-button" class="notification-clear-button">
+                すべて既読にする
+              </button>
+            </div>
+            <div id="notification-list" class="notification-list"></div>
+            <p id="notification-status" class="notification-status" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <!-- プロフィールメニュー -->
+        <div id="header-profile-menu" class="header-profile-menu" hidden>
+          <button
+            type="button"
+            id="header-profile-button"
+            class="header-profile-button"
+            aria-label="プロフィールメニューを開く"
+            aria-expanded="false"
+          >
+            <span id="header-profile-avatar" class="header-profile-avatar" aria-hidden="true">C</span>
+          </button>
+
+          <!-- プロフィールドロップダウン -->
+          <div id="header-profile-dropdown" class="header-profile-dropdown" hidden>
+            <a id="header-my-profile-link" href="user.html">
+              自分のプロフィール
+            </a>
+            <a href="profile.html">
+              プロフィール変更
+            </a>
+            <a href="favorites.html">
+              お気に入り一覧
+            </a>
+            <button type="button" id="header-menu-logout-button" class="header-menu-logout-button">
+              ログアウト
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="favorites-main">
+    <!-- お気に入り一覧セクション -->
+    <section class="favorites-section">
+      <div class="section-heading">
+        <div>
+          <p class="section-label">MY FAVORITES</p>
+          <h2>お気に入りしたスマホケース</h2>
+        </div>
+        <div class="post-list-controls">
+          <p id="favorites-count" class="post-count">0件のお気に入り</p>
+        </div>
+      </div>
+
+      <!-- 投稿グリッド -->
+      <div id="favorites-post-grid" class="post-grid"></div>
+
+      <!-- 空状態のメッセージ -->
+      <div id="empty-post-message" class="empty-post-message" hidden>
+        <p class="empty-post-title">お気に入りした投稿はありません</p>
+        <p class="empty-post-description">
+          ホーム画面でスマホケースのハートマーク（♡）を押して、お気に入りに追加してみましょう！
+        </p>
+        <div class="empty-action-area">
+          <a href="index.html" class="go-home-button">ホームで投稿を探す</a>
+        </div>
+      </div>
+
+      <!-- 読み込み中ステータス -->
+      <p id="favorites-page-status" class="favorites-page-status" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <!-- 投稿詳細画面 -->
+  <dialog id="post-detail-dialog" class="post-detail-dialog">
+    <div class="detail-dialog-inner">
+      <button
+        type="button"
+        id="detail-close-button"
+        class="detail-close-button"
+        aria-label="投稿詳細を閉じる"
+      >
+        ×
+      </button>
+
+      <div class="detail-layout">
+        <!-- 詳細画像 -->
+        <div class="detail-image-area">
+          <img id="detail-image" class="detail-image" src="" alt="">
+        </div>
+
+        <!-- 詳細情報 -->
+        <div class="detail-content">
+          <div id="detail-tags" class="detail-tags"></div>
+          <h2 id="detail-title"></h2>
+
+          <!-- 投稿者プロフィール -->
+          <a id="detail-author" class="detail-author" href="user.html" aria-label="投稿者のプロフィールを見る" hidden>
+            <div id="detail-author-avatar" class="detail-author-avatar" aria-hidden="true">C</div>
+            <div class="detail-author-text">
+              <p id="detail-author-name" class="detail-author-name"></p>
+              <p id="detail-author-username" class="detail-author-username"></p>
+            </div>
+          </a>
+
+          <p id="detail-device" class="detail-device"></p>
+
+          <section class="detail-section">
+            <h3>ケースの説明</h3>
+            <p id="detail-description"></p>
+          </section>
+
+          <!-- 使用アイテム一覧 -->
+          <section id="detail-items-section" class="detail-section">
+            <h3>使用アイテム</h3>
+            <dl class="detail-item-list">
+              <div id="detail-case-row">
+                <dt>ケース</dt>
+                <dd id="detail-case"></dd>
+              </div>
+              <div id="detail-case-row-shop" class="detail-case-shop-row" id="detail-case-shop-row">
+                <dt>ケースの購入場所</dt>
+                <dd id="detail-case-shop"></dd>
+              </div>
+              <div id="detail-sticker-row">
+                <dt>ステッカー</dt>
+                <dd id="detail-sticker"></dd>
+              </div>
+              <div id="detail-sticker-shop-row">
+                <dt>ステッカーの購入場所</dt>
+                <dd id="detail-sticker-shop"></dd>
+              </div>
+              <div id="detail-keychain-row">
+                <dt>キーホルダー</dt>
+                <dd id="detail-keychain"></dd>
+              </div>
+              <div id="detail-keychain-shop-row">
+                <dt>キーホルダーの購入場所</dt>
+                <dd id="detail-keychain-shop"></dd>
+              </div>
+              <div id="detail-other-row">
+                <dt>その他・備考</dt>
+                <dd id="detail-other"></dd>
+              </div>
+            </dl>
+          </section>
+
+          <!-- お気に入り・管理アクション -->
+          <div class="detail-actions">
+            <!-- お気に入りボタン -->
+            <button
+              type="button"
+              id="detail-like-button"
+              class="detail-like-button"
+              aria-label="お気に入りに追加"
+            >
+              ♡
+            </button>
+
+            <!-- 自分の投稿を管理するボタン -->
+            <button type="button" id="edit-post-button" class="edit-post-button" hidden>
+              投稿を編集
+            </button>
+            <button type="button" id="delete-post-button" class="delete-post-button" hidden>
+              この投稿を削除
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- JS スクリプト読み込み -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase-posts.js"></script>
+  <script src="supabase-profiles.js"></script>
+  <script src="supabase-favorites.js"></script>
+  <!-- 認証UI連動 -->
+  <script src="auth-ui.js"></script>
+  <!-- 通知機能 -->
+  <script src="supabase-notifications.js"></script>
+  <!-- お気に入り専用JS -->
+  <script src="favorites.js"></script>
+</body>
+</html>

@@ -47,6 +47,52 @@
           プロフィール
         </a>
 
+        <!-- 通知メニュー -->
+        <div
+          id="header-notification-menu"
+          class="header-notification-menu"
+          hidden
+        >
+          <button
+            type="button"
+            id="header-notification-button"
+            class="header-notification-button"
+            aria-label="通知一覧を開く"
+            aria-expanded="false"
+          >
+            <span class="notification-icon" aria-hidden="true">
+              <svg class="bell-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+            </span>
+            <span id="notification-badge" class="notification-badge" hidden>0</span>
+          </button>
+
+          <div
+            id="notification-dropdown"
+            class="notification-dropdown"
+          >
+            <div class="notification-dropdown-header">
+              <h2>通知</h2>
+              <button
+                type="button"
+                id="notification-clear-button"
+                class="notification-clear-button"
+              >
+                すべて既読にする
+              </button>
+            </div>
+            <div id="notification-list" class="notification-list"></div>
+            <p
+              id="notification-status"
+              class="notification-status"
+              role="status"
+              aria-live="polite"
+            ></p>
+          </div>
+        </div>
+
         <div
   id="header-profile-menu"
   class="header-profile-menu"
@@ -79,6 +125,10 @@
 
     <a href="profile.html">
       プロフィール変更
+    </a>
+
+    <a href="favorites.html">
+      お気に入り一覧
     </a>
 
     <button
@@ -152,21 +202,6 @@
         <button type="button" class="tag-button active" data-tag="all">
           すべて
         </button>
-        <button type="button" class="tag-button" data-tag="推し活">
-          #推し活
-        </button>
-        <button type="button" class="tag-button" data-tag="シンプル">
-          #シンプル
-        </button>
-        <button type="button" class="tag-button" data-tag="キャラクター">
-          #キャラクター
-        </button>
-        <button type="button" class="tag-button" data-tag="クリアケース">
-          #クリアケース
-        </button>
-        <button type="button" class="tag-button" data-tag="スポーツ">
-          #スポーツ
-        </button>
       </div>
 
             <!-- キーワード検索 -->
@@ -228,83 +263,11 @@
         </div>
 
         <div class="post-list-controls">
-  <p class="post-count">3件の投稿</p>
-
-  <button
-    type="button"
-    id="favorite-filter-button"
-    class="favorite-filter-button"
-    aria-pressed="false"
-  >
-    ♡ お気に入り
-  </button>
-</div>
+          <p class="post-count">0件の投稿</p>
+        </div>
       </div>
 
-      <div class="post-grid">
-        <!-- サンプル投稿1 -->
-        
-        <article
-            class="post-card"
-            data-tags="推し活 クリアケース"
-            data-device-type="iPhone"
->
-          <div class="post-image placeholder-image placeholder-purple">
-            <span>CASE IMAGE</span>
-          </div>
-
-          <div class="post-content">
-            <div class="post-tags">
-              <span>#推し活</span>
-              <span>#クリアケース</span>
-            </div>
-
-            <h3>好きな写真を挟んだクリアケース</h3>
-            <p class="device-name">iPhone 16</p>
-          </div>
-        </article>
-
-        <!-- サンプル投稿2 -->
-        <article
-            class="post-card"
-            data-tags="シンプル"
-            data-device-type="Android"
->
-          <div class="post-image placeholder-image placeholder-blue">
-            <span>CASE IMAGE</span>
-          </div>
-
-          <div class="post-content">
-            <div class="post-tags">
-              <span>#シンプル</span>
-            </div>
-
-            <h3>モノトーンでまとめたシンプルケース</h3>
-            <p class="device-name">Google Pixel 9</p>
-          </div>
-        </article>
-
-        <!-- サンプル投稿3 -->
-        <article
-            class="post-card"
-            data-tags="キャラクター スポーツ"
-            data-device-type="Android"
->
-            <div class="post-image placeholder-image placeholder-green">
-                <span>CASE IMAGE</span>
-                </div>
-
-                <div class="post-content">
-                    <div class="post-tags">
-                        <span>#キャラクター</span>
-                        <span>#スポーツ</span>
-                        </div>
-
-                <h3>お気に入りを集めたカスタムケース</h3>
-                <p class="device-name">Galaxy S26</p>
-             </div>
-        </article>
-      </div>
+      <div class="post-grid"></div>
 
             <div
         id="empty-post-message"
@@ -775,6 +738,9 @@
 <script src="supabase-favorites.js"></script>
 
 <script src="supabase-profiles.js"></script>
+
+<!-- 通知機能の処理 -->
+<script src="supabase-notifications.js"></script>
 
 <!-- ヘッダーのログイン状態を管理 -->
 <script src="auth-ui.js"></script>

@@ -11,10 +11,6 @@ const emptyPostMessage = document.querySelector(
   "#empty-post-message"
 );
 
-const favoriteFilterButton = document.querySelector(
-  "#favorite-filter-button"
-);
-
 const postSearchInput = document.querySelector(
   "#post-search"
 );
@@ -64,9 +60,6 @@ const imagePreviewMessage = document.querySelector(
 
 // 現在選択されている絞り込みタグです
 let selectedFilterTag = "all";
-
-// お気に入りだけを表示しているか記録します
-let isFavoriteFilterActive = false;
 
 // 現在入力されている検索文字です
 let currentSearchKeyword = "";
@@ -118,14 +111,6 @@ function filterPosts(tag) {
       (post) => post.id === postId
     );
 
-    // お気に入りの条件
-    let matchesFavorite = true;
-
-    if (isFavoriteFilterActive) {
-      matchesFavorite =
-        savedPost && savedPost.isLiked === true;
-    }
-
     // 検索対象となる文字をまとめます
     let searchableText = card.textContent;
 
@@ -169,7 +154,6 @@ function filterPosts(tag) {
 
     const shouldShow =
         matchesTag &&
-        matchesFavorite &&
         matchesSearch &&
         matchesDevice;
 
@@ -199,26 +183,6 @@ tagList.addEventListener("click", (event) => {
   filterPosts(clickedButton.dataset.tag);
 });
 
-favoriteFilterButton.addEventListener("click", () => {
-  isFavoriteFilterActive = !isFavoriteFilterActive;
-
-  favoriteFilterButton.classList.toggle(
-    "active",
-    isFavoriteFilterActive
-  );
-
-  favoriteFilterButton.setAttribute(
-    "aria-pressed",
-    String(isFavoriteFilterActive)
-  );
-
-  favoriteFilterButton.textContent =
-    isFavoriteFilterActive
-      ? "♥ お気に入り表示中"
-      : "♡ お気に入り";
-
-  filterPosts(selectedFilterTag);
-});
 
 // 検索文字が入力されるたびに絞り込みます
 postSearchInput.addEventListener("input", () => {
@@ -412,25 +376,80 @@ tagInput.addEventListener("keydown", (event) => {
 // 絞り込み用タグボタンの作成
 // =========================
 
-function addFilterTagButton(tag) {
-  const tagButtons = document.querySelectorAll(".tag-button");
+// 「もっと表示」トグルのための状態管理変数
+let isAllTagsExpanded = false;
+const MAX_VISIBLE_TAGS = 8; // 初期表示する件数
+const MAX_TOTAL_TAGS = 20; // 画面に表示するハッシュタグの最大総数（人気上位20件）
 
-  const tagAlreadyExists = Array.from(tagButtons).some(
-    (button) => button.dataset.tag === tag
-  );
+function updateFilterTagList() {
+  if (!tagList) return;
 
-  if (tagAlreadyExists) {
-    return;
+  // 1. 各ハッシュタグの出現回数（人気度）を集計します
+  const tagCounts = {};
+  savedPosts.forEach((post) => {
+    if (Array.isArray(post.tags)) {
+      post.tags.forEach((tag) => {
+        if (tag && tag.trim() !== "") {
+          tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+        }
+      });
+    }
+  });
+
+  // 2. 出現回数（人気度）が多い順にソートし、最大上限（上位20件）で切り詰めます
+  const sortedTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a]);
+  const limitedTags = sortedTags.slice(0, MAX_TOTAL_TAGS);
+
+  // 3. tagList の中身を初期化します（「すべて」ボタンだけを残します）
+  const activeTag = selectedFilterTag || "all";
+  tagList.replaceChildren();
+
+  // 「すべて」ボタンを再生成
+  const allButton = document.createElement("button");
+  allButton.type = "button";
+  allButton.className = `tag-button${activeTag === "all" ? " active" : ""}`;
+  allButton.dataset.tag = "all";
+  allButton.textContent = "すべて";
+  tagList.appendChild(allButton);
+
+  // 4. ソートされたタグボタンを生成して追加します
+  limitedTags.forEach((tag, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `tag-button${activeTag === tag ? " active" : ""}`;
+    button.dataset.tag = tag;
+    button.textContent = `#${tag}`;
+
+    // MAX_VISIBLE_TAGS (8件) を超えるタグは非表示用のクラスを付与し、非展開時は非表示にします
+    if (index >= MAX_VISIBLE_TAGS) {
+      button.classList.add("hidden-tag");
+      if (!isAllTagsExpanded) {
+        button.style.display = "none";
+      }
+    }
+
+    tagList.appendChild(button);
+  });
+
+  // 5. タグが MAX_VISIBLE_TAGS を超える場合、「もっと表示」トグルボタンを追加します
+  if (limitedTags.length > MAX_VISIBLE_TAGS) {
+    const toggleButton = document.createElement("button");
+    toggleButton.type = "button";
+    toggleButton.id = "tag-list-toggle-button";
+    toggleButton.className = "tag-list-toggle-button";
+    toggleButton.textContent = isAllTagsExpanded ? "一部のみ表示" : "もっと表示";
+    
+    toggleButton.addEventListener("click", () => {
+      isAllTagsExpanded = !isAllTagsExpanded;
+      const hiddenTags = tagList.querySelectorAll(".hidden-tag");
+      hiddenTags.forEach((el) => {
+        el.style.display = isAllTagsExpanded ? "inline-block" : "none";
+      });
+      toggleButton.textContent = isAllTagsExpanded ? "一部のみ表示" : "もっと表示";
+    });
+
+    tagList.appendChild(toggleButton);
   }
-
-  const newTagButton = document.createElement("button");
-
-  newTagButton.type = "button";
-  newTagButton.className = "tag-button";
-  newTagButton.dataset.tag = tag;
-  newTagButton.textContent = `#${tag}`;
-
-  tagList.appendChild(newTagButton);
 }
 
 // =========================
@@ -488,10 +507,6 @@ localStorage.setItem(
 savedPosts.forEach((postData) => {
       const postCard = createPostCard(postData);
       postGrid.prepend(postCard);
-
-      postData.tags.forEach((tag) => {
-        addFilterTagButton(tag);
-      });
     });
   } catch (error) {
     console.error("保存された投稿を読み込めませんでした。", error);
@@ -549,16 +564,26 @@ async function displaySupabasePosts() {
     supabasePosts.forEach((postData) => {
       const postCard = createPostCard(postData);
       postGrid.prepend(postCard);
-
-      postData.tags.forEach((tag) => {
-        addFilterTagButton(tag);
-      });
     });
+
+    updateFilterTagList();
 
     console.log(
       `${supabasePosts.length}件のSupabase投稿と、` +
       `${favoritePostIds.length}件のお気に入りを読み込みました。`
     );
+
+    // URLパラメータに postId があれば、自動的に詳細を開きます
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoOpenPostId = urlParams.get("postId");
+    if (autoOpenPostId) {
+      // 描画後、少し待ってから実行します
+      setTimeout(() => {
+        if (typeof openPostDetailById === "function") {
+          openPostDetailById(autoOpenPostId);
+        }
+      }, 300);
+    }
   } catch (error) {
     console.error(
       "Supabaseの投稿を読み込めませんでした。",
@@ -856,12 +881,8 @@ if (postBeingEdited) {
     }
 
     // 新しく追加されたタグボタンを作ります
-    updatedPostData.tags.forEach((tag) => {
-      addFilterTagButton(tag);
-    });
-
-    // 使われなくなったタグボタンを整理します
-    removeUnusedTagButtons();
+    // タグ一覧を最新の人気度ソート・もっと表示で更新します
+    updateFilterTagList();
 
     formStatus.textContent = "投稿を更新しました。";
   } catch (error) {
@@ -879,6 +900,14 @@ if (postBeingEdited) {
 
     // 画像と投稿情報をSupabaseへ保存します
     const createdPost = await createSupabasePost(postData);
+
+    // 新規投稿データを配列へ追加し、画面にカードを追加します
+    savedPosts.push(createdPost);
+    const postCard = createPostCard(createdPost);
+    postGrid.prepend(postCard);
+
+    // ハッシュタグの人気度ソートとトグルボタンを更新します
+    updateFilterTagList();
 
     formStatus.textContent = "投稿を保存しました。";
 
@@ -1277,6 +1306,10 @@ async function toggleFavorite(postId, likeButton) {
       } else {
         // 未登録ならお気に入りへ追加します
         await addSupabaseFavorite(postId);
+        // 投稿者に通知を送信します
+        if (typeof addNotification === "function") {
+          await addNotification(targetPost.userId, "like", postId);
+        }
       }
     }
 
@@ -1310,10 +1343,6 @@ async function toggleFavorite(postId, likeButton) {
       );
     }
 
-    // お気に入り一覧を表示中なら一覧を更新します
-    if (isFavoriteFilterActive) {
-      filterPosts(selectedFilterTag);
-    }
   } catch (error) {
     console.error(
       "お気に入りの変更に失敗しました。",
@@ -1328,6 +1357,24 @@ async function toggleFavorite(postId, likeButton) {
     likeButton.disabled = false;
   }
 }
+
+// 投稿IDから投稿詳細を直接開きます（通知機能用）
+async function openPostDetailById(postId) {
+  let post = savedPosts.find((p) => p.id === postId);
+  if (!post) {
+    // 読み込みにラグがある場合を考慮して少し待機して再試行
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    post = savedPosts.find((p) => p.id === postId);
+  }
+
+  if (post) {
+    openPostDetail(post);
+  } else {
+    console.warn(`ID: ${postId} の投稿が見つかりませんでした。`);
+  }
+}
+window.openPostDetailById = openPostDetailById;
+
 
 
 // 投稿一覧内がクリックされたとき

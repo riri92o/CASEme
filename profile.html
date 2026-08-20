@@ -35,6 +35,7 @@
       >
         <a href="index.html">ホーム</a>
         <a href="post.html">投稿する</a>
+        <a href="favorites.html">お気に入り</a>
 
         <button
           type="button"
@@ -81,30 +82,24 @@
       <form id="profile-form" class="profile-form">
 
         <!-- プロフィール画像 -->
-<div class="profile-form-field">
-  <label for="profile-avatar-input">
-    プロフィール画像
-  </label>
+        <div class="profile-form-field">
+          <label for="profile-avatar-input">
+            プロフィール画像
+          </label>
 
-  <input
-    type="file"
-    id="profile-avatar-input"
-    <input
-      type="file"
-      id="profile-avatar-input"
-      hidden
-      name="avatar"
-      accept="image/jpeg,image/png,image/webp"
-    >
-    name="avatar"
-    accept="image/jpeg,image/png,image/webp"
-  >
+          <input
+            type="file"
+            id="profile-avatar-input"
+            hidden
+            name="avatar"
+            accept="image/jpeg,image/png,image/webp"
+          >
 
-  <p class="profile-field-note">
-    JPEG・PNG・WebP形式の画像を選択できます。
-    本人が使用する権利を持つ画像を設定してください。
-  </p>
-</div>
+          <p class="profile-field-note">
+            JPEG・PNG・WebP形式の画像を選択できます。
+            本人が使用する権利を持つ画像を設定してください。
+          </p>
+        </div>
         <div class="profile-form-field">
           <label for="profile-display-name">
             表示名

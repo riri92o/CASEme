@@ -21,8 +21,12 @@
     <!-- ページ上部のヘッダー -->
   <header class="site-header">
     <div class="header-inner">
-      <a href="index.html" class="logo" aria-label="CASEme ホーム"></a>
-      CASE<span>me</span>
+      <a
+        href="index.html"
+        class="logo"
+        aria-label="CASEme ホーム"
+      >
+        CASE<span>me</span>
       </a>
 
      <nav class="header-nav" aria-label="メインメニュー">
@@ -44,6 +48,52 @@
         >
         プロフィール
         </a>
+
+        <!-- 通知メニュー -->
+        <div
+          id="header-notification-menu"
+          class="header-notification-menu"
+          hidden
+        >
+          <button
+            type="button"
+            id="header-notification-button"
+            class="header-notification-button"
+            aria-label="通知一覧を開く"
+            aria-expanded="false"
+          >
+            <span class="notification-icon" aria-hidden="true">
+              <svg class="bell-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+            </span>
+            <span id="notification-badge" class="notification-badge" hidden>0</span>
+          </button>
+
+          <div
+            id="notification-dropdown"
+            class="notification-dropdown"
+          >
+            <div class="notification-dropdown-header">
+              <h2>通知</h2>
+              <button
+                type="button"
+                id="notification-clear-button"
+                class="notification-clear-button"
+              >
+                すべて既読にする
+              </button>
+            </div>
+            <div id="notification-list" class="notification-list"></div>
+            <p
+              id="notification-status"
+              class="notification-status"
+              role="status"
+              aria-live="polite"
+            ></p>
+          </div>
+        </div>
 
         <div
   id="header-profile-menu"
@@ -80,6 +130,10 @@
 
     <a href="profile.html">
       プロフィール変更
+    </a>
+
+    <a href="favorites.html">
+      お気に入り一覧
     </a>
 
     <button
@@ -781,6 +835,9 @@
 <script src="supabase-posts.js"></script>
 
 <script src="supabase-profiles.js"></script>
+
+<!-- 通知機能の処理 -->
+<script src="supabase-notifications.js"></script>
 
 <!-- ヘッダーのログイン状態を管理 -->
 <script src="auth-ui.js"></script>

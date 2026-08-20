@@ -278,6 +278,25 @@ button {
   border-color: var(--accent);
 }
 
+.tag-list-toggle-button {
+  min-height: 40px;
+  padding: 7px 17px;
+  cursor: pointer;
+  color: var(--text-sub);
+  background-color: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.tag-list-toggle-button:hover {
+  color: var(--accent-dark);
+  background-color: var(--accent-light);
+  border: 1px solid var(--accent);
+}
+
 /* =========================
    投稿一覧
 ========================= */
@@ -516,16 +535,41 @@ button {
   }
 
   .post-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
   }
 
   .post-image {
     aspect-ratio: 5 / 4;
   }
 
+  .post-content {
+    padding: 12px;
+  }
+
   .post-content h3 {
+    font-size: 14px;
+    margin: 6px 0;
     min-height: auto;
+  }
+
+  .post-tags {
+    gap: 4px;
+  }
+
+  .post-tags span {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .device-name {
+    font-size: 11px;
+  }
+
+  .like-button {
+    font-size: 16px;
+    width: 28px;
+    height: 28px;
   }
 
   .form-section {
@@ -2551,10 +2595,6 @@ button {
   .user-profile-card {
     flex-direction: column;
   }
-
-  .user-post-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* プロフィール画像のプレビュー中 */
@@ -2733,7 +2773,23 @@ button {
   display: flex;
   align-items: baseline;
   gap: 6px;
+  padding: 4px 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  font: inherit;
   white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.user-follow-stat:hover {
+  opacity: 0.65;
+}
+
+.user-follow-stat:focus-visible {
+  outline: 2px solid rgba(95, 126, 105, 0.3);
+  outline-offset: 3px;
 }
 
 .user-follow-stat strong {
@@ -2778,4 +2834,593 @@ button {
 .user-follow-button:disabled {
   cursor: wait;
   opacity: 0.65;
+}
+
+/* =========================
+   フォロー・フォロワー一覧
+========================= */
+
+.follow-list-dialog {
+  width: min(440px, calc(100% - 32px));
+  max-height: min(640px, calc(100dvh - 40px));
+  padding: 0;
+  border: 1px solid #dfe5e0;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(25, 38, 29, 0.2);
+  overflow: hidden;
+}
+
+.follow-list-dialog::backdrop {
+  background: rgba(20, 25, 22, 0.48);
+  backdrop-filter: blur(3px);
+}
+
+.follow-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 17px 18px;
+  border-bottom: 1px solid #e7ebe8;
+}
+
+.follow-list-header h2 {
+  margin: 0;
+  color: #202421;
+  font-size: 18px;
+}
+
+.follow-list-close-button {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #4f5752;
+  background: #f1f4f2;
+  font: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.follow-list-close-button:hover {
+  background: #e6ece8;
+}
+
+.follow-list {
+  max-height: min(480px, calc(100dvh - 180px));
+  padding: 8px;
+  overflow-y: auto;
+}
+
+.follow-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.follow-list-item:hover {
+  background: #f2f5f3;
+}
+
+.follow-list-avatar {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #ffffff;
+  background:
+    linear-gradient(145deg, #607d69, #91ad9a);
+  background-position: center;
+  background-size: cover;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.follow-list-avatar.has-image {
+  color: transparent;
+}
+
+.follow-list-user-text {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.follow-list-user-text strong,
+.follow-list-user-text span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.follow-list-user-text strong {
+  color: #202421;
+  font-size: 14px;
+}
+
+.follow-list-user-text span {
+  color: #747d77;
+  font-size: 13px;
+}
+
+.follow-list-status {
+  margin: 0;
+  padding: 22px 18px 26px;
+  color: #747d77;
+  font-size: 14px;
+  text-align: center;
+}
+
+.follow-list-status:empty {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  .user-follow-area {
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .user-follow-stats {
+    gap: 18px;
+  }
+
+  .follow-list-dialog {
+    width: calc(100% - 20px);
+    border-radius: 16px;
+  }
+}
+
+/* =========================
+   パスワード再設定追加スタイル
+========================= */
+.auth-link-sub {
+  color: var(--text-sub);
+  font-size: 12px;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: right;
+  margin-top: 6px;
+  display: inline-block;
+  transition: color 0.2s ease;
+}
+
+.auth-link-sub:hover {
+  color: var(--accent-dark);
+}
+
+.auth-link-button {
+  color: var(--text-sub);
+  font-size: 13px;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: center;
+  margin-top: 8px;
+  transition: color 0.2s ease;
+}
+
+.auth-link-button:hover {
+  color: var(--accent-dark);
+}
+
+.auth-instruction {
+  color: var(--text-sub);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+/* =========================
+   パスワード表示トグルスタイル
+========================= */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 42px !important;
+}
+
+.password-toggle-button {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: var(--text-sub);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  z-index: 2;
+}
+
+.password-toggle-button:hover {
+  color: var(--accent-dark);
+}
+
+.password-toggle-button svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+}
+
+/* 表示・非表示切り替え時のアイコンのトグル */
+.password-toggle-button .eye-off {
+  display: none;
+}
+
+.password-toggle-button .eye-on {
+  display: block;
+}
+
+.password-toggle-button.show-password .eye-off {
+  display: block;
+}
+
+.password-toggle-button.show-password .eye-on {
+  display: none;
+}
+
+
+/* =========================
+   通知機能スタイル
+========================= */
+
+.header-notification-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.header-notification-button {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #dce4de;
+  border-radius: 50%;
+  background: #eef3ef;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+  color: #5f7e69;
+  padding: 0;
+}
+
+.header-notification-button:hover {
+  transform: translateY(-1px);
+  border-color: #819b89;
+  color: #3b5242;
+}
+
+.header-notification-button:active {
+  transform: translateY(0);
+}
+
+.header-notification-button .bell-icon {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2.2px;
+}
+
+.notification-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: #e85656;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(232, 86, 86, 0.4);
+}
+
+/* hidden属性を最優先で適用 */
+.header-notification-menu[hidden] {
+  display: none !important;
+}
+
+/* 通知ドロップダウン */
+.notification-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 360px;
+  max-height: 480px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid #dfe5e0;
+  border-radius: 16px;
+  box-shadow: 0 12px 36px rgba(25, 38, 29, 0.12);
+  z-index: 1000;
+  display: none; /* デフォルト非表示 */
+  flex-direction: column;
+  overflow: hidden;
+  transform-origin: top right;
+}
+
+/* 表示用のクラス */
+.notification-dropdown.show {
+  display: flex !important;
+  animation: notificationDropdownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes notificationDropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.notification-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e7ebe8;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.notification-dropdown-header h2 {
+  margin: 0;
+  font-size: 15px;
+  color: #202421;
+  font-weight: 700;
+}
+
+.notification-clear-button {
+  border: none;
+  background: none;
+  font-size: 12px;
+  color: #5f7e69;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.notification-clear-button:hover {
+  background-color: #f1f4f2;
+  color: #3b5242;
+}
+
+.notification-clear-button:disabled {
+  color: #a2aba5;
+  cursor: wait;
+}
+
+/* 通知リスト */
+.notification-list {
+  overflow-y: auto;
+  max-height: 380px;
+  flex: 1;
+}
+
+.notification-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+  background: #dfe5e0;
+  border-radius: 3px;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f2f5f3;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background-color: #f6f8f7;
+}
+
+.notification-item.unread {
+  background-color: #f4fbf6;
+}
+
+.notification-item.unread:hover {
+  background-color: #eef7f0;
+}
+
+.notification-item-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #607d69, #91ad9a);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+  background-position: center;
+  background-size: cover;
+}
+
+.notification-item-avatar.has-image {
+  color: transparent;
+}
+
+.notification-item-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.notification-item-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #4f5752;
+  word-break: break-all;
+}
+
+.notification-item-text strong {
+  color: #202421;
+  font-weight: 600;
+}
+
+.notification-post-title {
+  color: #202421;
+  font-weight: 600;
+}
+
+.notification-item-time {
+  font-size: 11px;
+  color: #8c9690;
+}
+
+/* 未読バッジドット */
+.notification-unread-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #3b82f6; /* 未読を示す青いドット */
+  align-self: center;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.notification-item.unread .notification-unread-dot {
+  opacity: 1;
+}
+
+.notification-status {
+  margin: 0;
+  padding: 24px 16px;
+  text-align: center;
+  color: #747d77;
+  font-size: 13px;
+}
+
+/* モバイル表示調整 */
+@media (max-width: 560px) {
+  .notification-dropdown {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+    max-height: calc(100vh - 120px);
+  }
+}
+
+/* ==========================================
+   お気に入り一覧画面 (favorites.html) 専用スタイル
+   ========================================== */
+
+.favorites-page {
+  background-color: var(--background);
+}
+
+.favorites-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px 80px 20px;
+}
+
+.favorites-section {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.favorites-page-status {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-sub);
+  margin: 20px 0;
+}
+
+.empty-action-area {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.go-home-button {
+  display: inline-block;
+  min-height: 48px;
+  padding: 12px 32px;
+  background-color: var(--accent);
+  color: #ffffff;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 4px 12px rgba(102, 139, 120, 0.15);
+}
+
+.go-home-button:hover {
+  background-color: var(--accent-dark);
+  transform: translateY(-1px);
+}
+
+.go-home-button:active {
+  transform: translateY(0);
 }
