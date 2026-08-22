@@ -282,25 +282,72 @@ async function deleteSupabasePost(postData) {
     );
   }
 
-  const { error: deleteError } =
-    await caseMeSupabase
+  let deletedImagePath = postData.imagePath;
+
+  // お気に入り・通知などの関連データも含めて、
+  // Supabase側で安全に投稿を削除します。
+  const {
+    data: rpcImagePath,
+    error: rpcDeleteError
+  } = await caseMeSupabase.rpc(
+    "delete_owned_post",
+    {
+      target_post_id: postData.id
+    }
+  );
+
+  if (!rpcDeleteError) {
+    deletedImagePath = rpcImagePath || deletedImagePath;
+  } else {
+    // SQL関数をまだ導入していない環境では、
+    // 従来の削除方法も一度だけ試します。
+    const isMissingRpc =
+      rpcDeleteError.code === "PGRST202" ||
+      rpcDeleteError.message
+        ?.toLowerCase()
+        .includes("delete_owned_post");
+
+    if (!isMissingRpc) {
+      throw new Error(
+        `投稿を削除できませんでした：${rpcDeleteError.message}`
+      );
+    }
+
+    const {
+      data: deletedPosts,
+      error: deleteError
+    } = await caseMeSupabase
       .from("posts")
       .delete()
       .eq("id", postData.id)
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .select("id");
 
-  if (deleteError) {
-    throw new Error(
-      `投稿を削除できませんでした：${deleteError.message}`
-    );
+    if (deleteError) {
+      if (deleteError.code === "23503") {
+        throw new Error(
+          "お気に入りなどの関連データが残っているため削除できません。Supabaseで setup_post_management.sql を一度実行してください。"
+        );
+      }
+
+      throw new Error(
+        `投稿を削除できませんでした：${deleteError.message}`
+      );
+    }
+
+    if (!deletedPosts || deletedPosts.length === 0) {
+      throw new Error(
+        "投稿を削除できませんでした。ログイン状態または投稿の所有者を確認してください。"
+      );
+    }
   }
 
   // データベース削除後に画像も削除します
-  if (postData.imagePath) {
+  if (deletedImagePath) {
     const { error: imageDeleteError } =
       await caseMeSupabase.storage
         .from(CASE_IMAGE_BUCKET)
-        .remove([postData.imagePath]);
+        .remove([deletedImagePath]);
 
     if (imageDeleteError) {
       console.warn(
