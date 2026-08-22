@@ -566,6 +566,12 @@ async function displaySupabasePosts() {
     updateFilterTagList();
     filterPosts(selectedFilterTag);
 
+    // ホーム画面では、読み込んだ投稿を
+    // 「最近の投稿」と「人気の投稿」に分けて表示します。
+    if (typeof window.renderHomeFeeds === "function") {
+      await window.renderHomeFeeds(savedPosts);
+    }
+
     console.log(
       `${supabasePosts.length}件のSupabase投稿と、` +
       `${favoritePostIds.length}件のお気に入りを読み込みました。`
@@ -1515,12 +1521,23 @@ deletePostButton.addEventListener("click", async () => {
     postDetailDialog.close();
     filterPosts("all");
 
+    if (typeof window.renderHomeFeeds === "function") {
+      await window.renderHomeFeeds(savedPosts);
+    }
+
     formStatus.textContent = "投稿を削除しました。";
+
+    if (!document.body.classList.contains("post-page")) {
+      window.alert("投稿を削除しました。");
+    }
   } catch (error) {
     console.error("投稿の削除に失敗しました。", error);
 
-    formStatus.textContent =
+    const deleteErrorMessage =
       error.message || "投稿の削除に失敗しました。";
+
+    formStatus.textContent = deleteErrorMessage;
+    window.alert(deleteErrorMessage);
   } finally {
     deletePostButton.disabled = false;
     deletePostButton.textContent = "削除";
