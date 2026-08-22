@@ -23,6 +23,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -37,6 +38,7 @@ body {
     "Yu Gothic",
     sans-serif;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 a {
@@ -63,6 +65,7 @@ button {
   position: sticky;
   top: 0;
   z-index: 100;
+  width: 100%;
   background-color: rgba(255, 255, 255, 0.94);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(14px);
@@ -132,6 +135,7 @@ button {
   padding: 92px 0 84px;
   position: relative;
   border-bottom: 1px solid var(--border);
+  overflow: hidden;
 }
 
 .hero::before {
@@ -217,6 +221,10 @@ button {
 .form-section {
   width: min(1040px, calc(100% - 40px));
   margin: 72px auto 0;
+}
+
+.tag-section {
+  overflow: hidden;
 }
 
 .section-heading {
@@ -324,8 +332,9 @@ button {
 
 .post-image {
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 3 / 4;
   border-bottom: 1px solid var(--border);
+  object-fit: cover;
 }
 
 .placeholder-image {
@@ -459,13 +468,18 @@ button {
 ========================= */
 
 @media (max-width: 600px) {
+  .logo {
+    font-size: 18px;
+  }
+
   .header-inner {
-    width: calc(100% - 28px);
+    width: 100%;
+    padding: 0 16px;
     min-height: 62px;
   }
 
   .header-nav {
-    gap: 17px;
+    gap: 8px;
     font-size: 12px;
   }
 
@@ -474,22 +488,22 @@ button {
   }
 
   .hero {
-    width: calc(100% - 28px);
+    width: calc(100% - 32px);
     padding: 68px 0 60px;
   }
 
   .hero::before {
     top: 58px;
-    right: -40px;
-    width: 145px;
-    height: 145px;
+    right: 10px;
+    width: 120px;
+    height: 120px;
   }
 
   .hero::after {
     top: 78px;
-    right: -12px;
-    width: 75px;
-    height: 145px;
+    right: 20px;
+    width: 60px;
+    height: 120px;
     border-radius: 16px;
   }
 
@@ -506,7 +520,7 @@ button {
   .tag-section,
   .posts-section,
   .form-section {
-    width: calc(100% - 28px);
+    width: calc(100% - 32px);
     margin-top: 56px;
   }
 
@@ -520,8 +534,8 @@ button {
 
   .tag-list {
     flex-wrap: nowrap;
-    margin-right: -14px;
-    padding-right: 14px;
+    margin-right: -16px;
+    padding-right: 16px;
     overflow-x: auto;
     scrollbar-width: none;
   }
@@ -535,21 +549,24 @@ button {
   }
 
   .post-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    grid-template-columns: 1fr;
+    max-width: none;
+    margin: 0;
+    gap: 24px;
   }
 
   .post-image {
-    aspect-ratio: 5 / 4;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
   }
 
   .post-content {
-    padding: 12px;
+    padding: 16px;
   }
 
   .post-content h3 {
-    font-size: 14px;
-    margin: 6px 0;
+    font-size: 15px;
+    margin: 8px 0;
     min-height: auto;
   }
 
@@ -1847,7 +1864,7 @@ button {
 
 @media (max-width: 600px) {
   .header-nav {
-    gap: 10px;
+    gap: 8px;
   }
 
   .logout-button {
@@ -1966,6 +1983,7 @@ button {
   position: sticky;
   top: 0;
   z-index: 20;
+  width: 100%;
   border-bottom: 1px solid #e4e8e5;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(14px);
@@ -2259,20 +2277,35 @@ button {
 
 @media (max-width: 640px) {
   .profile-header-inner {
-    width: min(100% - 28px, 1080px);
-    min-height: 64px;
+    width: 100%;
+    padding: 0 16px;
+    min-height: 60px;
   }
 
   .profile-navigation {
-    gap: 12px;
+    gap: 8px;
   }
 
   .profile-navigation a {
-    display: none;
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #5d635e;
+    text-decoration: none;
+    padding: 4px 6px;
+  }
+
+  .profile-navigation a:hover {
+    color: #171917;
+  }
+
+  .profile-logout-button {
+    padding: 6px 10px;
+    font-size: 11px;
   }
 
   .profile-main {
-    width: min(100% - 28px, 760px);
+    width: calc(100% - 32px);
     padding: 38px 0 70px;
   }
 
@@ -2504,7 +2537,7 @@ button {
 
 .user-post-image {
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 3 / 4;
   display: block;
   object-fit: cover;
   background: #eff2ef;
@@ -2553,7 +2586,7 @@ button {
 
 @media (max-width: 760px) {
   .user-main {
-    width: min(100% - 28px, 1080px);
+    width: calc(100% - 32px);
     padding: 38px 0 70px;
   }
 
@@ -2581,13 +2614,19 @@ button {
   }
 
   .user-post-grid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-    gap: 14px;
+    grid-template-columns: 1fr;
+    max-width: none;
+    margin: 0;
+    gap: 24px;
+  }
+
+  .user-post-image {
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
   }
 
   .user-post-content {
-    padding: 13px;
+    padding: 16px;
   }
 }
 

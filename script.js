@@ -166,10 +166,7 @@ function filterPosts(tag) {
 
   postCount.textContent = `${visiblePostCount}件の投稿`;
     
-  // 表示中の投稿が0件なら案内を表示します
-  emptyPostMessage.hidden = visiblePostCount !== 0;
-
-  // 検索結果が0件の場合はメッセージを表示
+  // 表示中の投稿が0件のときのみ、メッセージを表示します
   emptyPostMessage.hidden = visiblePostCount > 0;
 }
 
@@ -567,6 +564,7 @@ async function displaySupabasePosts() {
     });
 
     updateFilterTagList();
+    filterPosts(selectedFilterTag);
 
     console.log(
       `${supabasePosts.length}件のSupabase投稿と、` +
