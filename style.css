@@ -3564,3 +3564,105 @@ button {
   width: 22px;
   height: 22px;
 }
+
+/* ==========================================
+   ホームフィード・検索ページ
+========================================== */
+
+/* ホームでは検索欄と投稿フォームを別ページへ分離します */
+.home-page:not(.search-page) .tag-section,
+.home-page:not(.search-page) .form-section {
+  display: none;
+}
+
+/* 検索ページでは紹介部分と投稿フォームを表示しません */
+.search-page .hero,
+.search-page .form-section {
+  display: none;
+}
+
+.search-page main {
+  padding-top: 24px;
+}
+
+.search-page .tag-section {
+  margin-top: 40px;
+}
+
+.search-page .posts-section {
+  margin-top: 56px;
+}
+
+.popular-posts-section {
+  margin-top: 64px;
+  padding-top: 56px;
+  border-top: 1px solid var(--border);
+}
+
+.feed-status {
+  margin: 22px 0 0;
+  color: var(--text-sub);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.favorite-count {
+  margin-left: auto;
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.popular-post-grid .like-button {
+  margin-left: 4px;
+}
+
+/* ヘッダー背景が画面途中で切れないよう外側を全幅にします */
+.site-header,
+.profile-header {
+  width: 100%;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .search-page main {
+    padding-top: 8px;
+  }
+
+  .search-page .tag-section {
+    margin-top: 28px;
+  }
+
+  .search-page .posts-section,
+  .popular-posts-section {
+    margin-top: 44px;
+  }
+
+  /* 写真を小さく潰さず、スマホでは1列で大きく表示します */
+  .home-page .post-grid,
+  .search-page .post-grid,
+  .popular-post-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 24px !important;
+  }
+
+  .home-page .post-card,
+  .search-page .post-card {
+    width: 100%;
+  }
+
+  .home-page .post-image,
+  .search-page .post-image {
+    width: 100%;
+    height: auto !important;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  .popular-posts-section {
+    padding-top: 42px;
+  }
+}

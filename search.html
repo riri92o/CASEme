@@ -11,7 +11,7 @@
     content="CASEmeは、カスタマイズしたスマホケースを投稿・共有できるサービスです。"
   >
 
-  <title>投稿する | CASEme</title>
+  <title>スマホケースを検索 | CASEme</title>
 
   <meta name="theme-color" content="#6c8875">
   <link rel="icon" href="favicon.ico" sizes="any">
@@ -23,10 +23,12 @@
   <link rel="stylesheet" href="style.css?v=4">
 </head>
 
-  <body class="post-page">
-    <!-- ページ上部のヘッダー -->
+<body class="home-page search-page">
+<!-- ページ上部のヘッダー -->
   <header class="site-header">
     <div class="header-inner">
+
+      <!-- ロゴリンク -->
       <a
         href="index.html"
         class="logo"
@@ -35,14 +37,10 @@
         CASE<span>me</span>
       </a>
 
-     <nav class="header-nav" aria-label="メインメニュー">
-      <a href="index.html">ホーム</a>
-       <a href="search.html">検索</a>
-        <a
-          href="#post-form"
-          class="header-post-button"
-          aria-current="page"
-        >
+      <nav class="header-nav" aria-label="メインメニュー">
+       <a href="index.html">ホーム</a>
+       <a href="search.html" aria-current="page">検索</a>
+        <a href="post.html" class="header-post-button">
           投稿する
         </a>
 
@@ -52,7 +50,7 @@
           class="profile-link"
           hidden
         >
-        プロフィール
+          プロフィール
         </a>
 
         <!-- 通知メニュー -->
@@ -127,10 +125,7 @@
     class="header-profile-dropdown"
     hidden
   >
-    <a
-      id="header-my-profile-link"
-      href="user.html"
-    >
+    <a id="header-my-profile-link" href="user.html">
       自分のプロフィール
     </a>
 
@@ -143,12 +138,13 @@
     </a>
 
     <button
-      type="button"
-      id="header-menu-logout-button"
-      class="header-menu-logout-button"
-    >
-      ログアウト
-    </button>
+  type="button"
+  id="header-menu-logout-button"
+  class="header-menu-logout-button"
+>
+  ログアウト
+</button>
+
   </div>
 </div>
 
@@ -184,14 +180,7 @@
         </h1>
 
         <p class="hero-description">
-            スマホケースも、おしゃれの一部。
-            ステッカーやキーホルダーを使った、みんなのスタイルから
-            次のカスタマイズを見つけよう。
-        </p>
-
-        <p class="hero-description">
-          ステッカー、キーホルダー、推し活アイテム。
-          みんなのスマホケースを見て、次のカスタマイズの参考にできます。
+          スマホケースも、おしゃれの一部。ステッカー、キーホルダー、推し活アイテムなどを使ったみんなのスタイルを見て、次のカスタマイズの参考にしよう。
         </p>
 
         <a href="#posts" class="hero-button">投稿を見てみる</a>
@@ -211,21 +200,6 @@
       <div class="tag-list" aria-label="ハッシュタグ一覧">
         <button type="button" class="tag-button active" data-tag="all">
           すべて
-        </button>
-        <button type="button" class="tag-button" data-tag="推し活">
-          #推し活
-        </button>
-        <button type="button" class="tag-button" data-tag="シンプル">
-          #シンプル
-        </button>
-        <button type="button" class="tag-button" data-tag="キャラクター">
-          #キャラクター
-        </button>
-        <button type="button" class="tag-button" data-tag="クリアケース">
-          #クリアケース
-        </button>
-        <button type="button" class="tag-button" data-tag="スポーツ">
-          #スポーツ
         </button>
       </div>
 
@@ -283,88 +257,16 @@
     <section id="posts" class="posts-section">
       <div class="section-heading">
         <div>
-          <p class="section-label">LATEST CASES</p>
-          <h2>みんなのスマホケース</h2>
+          <p class="section-label">SEARCH CASES</p>
+          <h2>スマホケースを探す</h2>
         </div>
 
         <div class="post-list-controls">
-  <p class="post-count">3件の投稿</p>
-
-  <button
-    type="button"
-    id="favorite-filter-button"
-    class="favorite-filter-button"
-    aria-pressed="false"
-  >
-    ♡ お気に入り
-  </button>
-</div>
+          <p class="post-count">0件の投稿</p>
+        </div>
       </div>
 
-      <div class="post-grid">
-        <!-- サンプル投稿1 -->
-        
-        <article
-            class="post-card"
-            data-tags="推し活 クリアケース"
-            data-device-type="iPhone"
->
-          <div class="post-image placeholder-image placeholder-purple">
-            <span>CASE IMAGE</span>
-          </div>
-
-          <div class="post-content">
-            <div class="post-tags">
-              <span>#推し活</span>
-              <span>#クリアケース</span>
-            </div>
-
-            <h3>好きな写真を挟んだクリアケース</h3>
-            <p class="device-name">iPhone 16</p>
-          </div>
-        </article>
-
-        <!-- サンプル投稿2 -->
-        <article
-            class="post-card"
-            data-tags="シンプル"
-            data-device-type="Android"
->
-          <div class="post-image placeholder-image placeholder-blue">
-            <span>CASE IMAGE</span>
-          </div>
-
-          <div class="post-content">
-            <div class="post-tags">
-              <span>#シンプル</span>
-            </div>
-
-            <h3>モノトーンでまとめたシンプルケース</h3>
-            <p class="device-name">Google Pixel 9</p>
-          </div>
-        </article>
-
-        <!-- サンプル投稿3 -->
-        <article
-            class="post-card"
-            data-tags="キャラクター スポーツ"
-            data-device-type="Android"
->
-            <div class="post-image placeholder-image placeholder-green">
-                <span>CASE IMAGE</span>
-                </div>
-
-                <div class="post-content">
-                    <div class="post-tags">
-                        <span>#キャラクター</span>
-                        <span>#スポーツ</span>
-                        </div>
-
-                <h3>お気に入りを集めたカスタムケース</h3>
-                <p class="device-name">Galaxy S26</p>
-             </div>
-        </article>
-      </div>
+      <div class="post-grid"></div>
 
             <div
         id="empty-post-message"
@@ -576,106 +478,70 @@
 <fieldset class="item-fieldset form-group-full">
   <legend>ステッカーの情報</legend>
 
-  <div
-    id="sticker-fields"
-    class="multiple-item-fields"
-  >
-    <div class="multiple-item-row">
-      <div class="item-fields">
-        <div class="form-group">
-          <label>
-            使用したステッカー
-          </label>
+  <div class="item-fields">
+    <div class="form-group">
+      <label for="sticker-name">
+        使用したステッカー
+      </label>
 
-          <input
-            type="text"
-            class="sticker-name-input"
-            placeholder="例：キャラクターステッカー"
-            maxlength="100"
-          >
-        </div>
-
-        <div class="form-group">
-          <label>
-            ステッカーの購入場所
-          </label>
-
-          <input
-            type="text"
-            class="sticker-shop-input"
-            placeholder="例：公式ショップ、雑貨店"
-            maxlength="100"
-          >
-        </div>
-      </div>
-
-      <button
-        type="button"
-        class="remove-item-button"
-        aria-label="このステッカーを削除"
-        hidden
+      <input
+        type="text"
+        id="sticker-name"
+        name="stickerName"
+        placeholder="例：キャラクターステッカー"
+        maxlength="100"
       >
-        ×
-      </button>
+    </div>
+
+    <div class="form-group">
+      <label for="sticker-shop">
+        ステッカーの購入場所
+      </label>
+
+      <input
+        type="text"
+        id="sticker-shop"
+        name="stickerShop"
+        placeholder="例：公式ショップ、雑貨店"
+        maxlength="100"
+      >
     </div>
   </div>
-
-  <p class="input-note">
-    入力を始めると、次のステッカー欄が自動的に追加されます。
-  </p>
 </fieldset>
 
 <!-- キーホルダーの情報 -->
 <fieldset class="item-fieldset form-group-full">
   <legend>キーホルダーの情報</legend>
 
-  <div
-    id="keychain-fields"
-    class="multiple-item-fields"
-  >
-    <div class="multiple-item-row">
-      <div class="item-fields">
-        <div class="form-group">
-          <label>
-            使用したキーホルダー
-          </label>
+  <div class="item-fields">
+    <div class="form-group">
+      <label for="keychain-name">
+        使用したキーホルダー
+      </label>
 
-          <input
-            type="text"
-            class="keychain-name-input"
-            placeholder="例：アクリルキーホルダー"
-            maxlength="100"
-          >
-        </div>
-
-        <div class="form-group">
-          <label>
-            キーホルダーの購入場所
-          </label>
-
-          <input
-            type="text"
-            class="keychain-shop-input"
-            placeholder="例：イベント会場、公式通販"
-            maxlength="100"
-          >
-        </div>
-      </div>
-
-      <button
-        type="button"
-        class="remove-item-button"
-        aria-label="このキーホルダーを削除"
-        hidden
+      <input
+        type="text"
+        id="keychain-name"
+        name="keychainName"
+        placeholder="例：アクリルキーホルダー"
+        maxlength="100"
       >
-        ×
-      </button>
+    </div>
+
+    <div class="form-group">
+      <label for="keychain-shop">
+        キーホルダーの購入場所
+      </label>
+
+      <input
+        type="text"
+        id="keychain-shop"
+        name="keychainShop"
+        placeholder="例：イベント会場、公式通販"
+        maxlength="100"
+      >
     </div>
   </div>
-
-  <p class="input-note">
-    入力を始めると、次のキーホルダー欄が自動的に追加されます。
-  </p>
 </fieldset>
 
 <!-- その他の情報 -->
@@ -746,8 +612,37 @@
         <!-- 詳細情報 -->
         <div class="detail-content">
           <div id="detail-tags" class="detail-tags"></div>
-
+          
           <h2 id="detail-title"></h2>
+
+          <!-- 投稿者プロフィール -->
+          <a
+            id="detail-author"
+            class="detail-author"
+            href="user.html"
+            aria-label="投稿者のプロフィールを見る"
+            hidden
+          >
+            <div
+              id="detail-author-avatar"
+              class="detail-author-avatar"
+              aria-hidden="true"
+            >
+              C
+            </div>
+
+  <div class="detail-author-text">
+    <p
+      id="detail-author-name"
+      class="detail-author-name"
+    ></p>
+
+    <p
+      id="detail-author-username"
+      class="detail-author-username"
+    ></p>
+  </div>
+</a>
 
           <p id="detail-device" class="detail-device"></p>
 
@@ -830,15 +725,16 @@
   </footer>
 
   <!-- 動きを設定するJavaScriptファイルを読み込みます -->
-  
   <!-- Supabase公式JavaScriptライブラリ -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <!-- CASEmeのSupabase接続設定 -->
 <script src="supabase-config.js"></script>
 
 <!-- Supabaseの投稿処理 -->
 <script src="supabase-posts.js"></script>
+
+<script src="supabase-favorites.js"></script>
 
 <script src="supabase-profiles.js"></script>
 
@@ -892,5 +788,6 @@
 </nav>
 
 <script src="bottom-nav.js"></script>
+
 </body>
 </html>
