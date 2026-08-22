@@ -19,8 +19,57 @@
     "#popular-posts-status"
   );
   const homePostCount = document.querySelector(".post-count");
+  const feedCarousel = document.querySelector(
+    "#home-feed-carousel"
+  );
+  const recentFeedPanel = document.querySelector(
+    "#recent-feed-panel"
+  );
+  const feedTabs = Array.from(
+    document.querySelectorAll(".home-feed-tab")
+  );
 
   let currentHomePosts = [];
+
+  function selectFeedTab(selectedIndex, shouldScroll = true) {
+    feedTabs.forEach((tab, index) => {
+      const isSelected = index === selectedIndex;
+      tab.classList.toggle("active", isSelected);
+      tab.setAttribute("aria-selected", String(isSelected));
+    });
+
+    if (shouldScroll && feedCarousel) {
+      feedCarousel.scrollTo({
+        left: selectedIndex * feedCarousel.clientWidth,
+        behavior: "smooth"
+      });
+    }
+  }
+
+  feedTabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => {
+      selectFeedTab(index);
+    });
+  });
+
+  let feedScrollTimer = null;
+
+  feedCarousel?.addEventListener("scroll", () => {
+    window.clearTimeout(feedScrollTimer);
+
+    feedScrollTimer = window.setTimeout(() => {
+      const panelWidth =
+        recentFeedPanel?.getBoundingClientRect().width ||
+        feedCarousel.clientWidth;
+
+      const selectedIndex = Math.min(
+        feedTabs.length - 1,
+        Math.max(0, Math.round(feedCarousel.scrollLeft / panelWidth))
+      );
+
+      selectFeedTab(selectedIndex, false);
+    }, 80);
+  });
 
   function getPostTime(postData) {
     const time = new Date(

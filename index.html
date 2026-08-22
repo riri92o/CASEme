@@ -20,10 +20,20 @@
   <link rel="manifest" href="site.webmanifest">
 
   <!-- デザインを設定するCSSファイルを読み込みます -->
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 
 <body class="home-page">
+  <div id="app-splash" class="app-splash" aria-hidden="true">
+    <div class="app-splash-brand">
+      <img
+        class="app-splash-icon"
+        src="caseme-icons/caseme-icon-192.png"
+        alt=""
+      >
+      <p class="app-splash-logo">CASE<span>me</span></p>
+    </div>
+  </div>
 <!-- ページ上部のヘッダー -->
   <header class="site-header">
     <div class="header-inner">
@@ -253,12 +263,12 @@
 
     </section>
 
-    <!-- 投稿一覧部分 -->
-    <section id="posts" class="posts-section">
+    <!-- 最近・人気の投稿を横に切り替えるホームフィード -->
+    <section id="posts" class="posts-section home-feed-section">
       <div class="section-heading">
         <div>
-          <p class="section-label">NEW CASES</p>
-          <h2>最近の投稿</h2>
+          <p class="section-label">EXPLORE CASES</p>
+          <h2>ケースを見つける</h2>
         </div>
 
         <div class="post-list-controls">
@@ -266,49 +276,70 @@
         </div>
       </div>
 
-      <div class="post-grid"></div>
-
-            <div
-        id="empty-post-message"
-        class="empty-post-message"
-        hidden
-      >
-        <p class="empty-post-title">
-          条件に合う投稿がありません
-        </p>
-
-        <p class="empty-post-description">
-          検索文字やハッシュタグ、端末の条件を変更してみてください。
-        </p>
-
+      <div class="home-feed-tabs" role="tablist" aria-label="投稿の並び順">
+        <button
+          type="button"
+          id="recent-feed-tab"
+          class="home-feed-tab active"
+          role="tab"
+          aria-selected="true"
+          aria-controls="recent-feed-panel"
+        >
+          最近の投稿
+        </button>
+        <button
+          type="button"
+          id="popular-feed-tab"
+          class="home-feed-tab"
+          role="tab"
+          aria-selected="false"
+          aria-controls="popular-feed-panel"
+        >
+          人気の投稿
+        </button>
       </div>
 
-    </section>
+      <div id="home-feed-carousel" class="home-feed-carousel">
+        <section
+          id="recent-feed-panel"
+          class="home-feed-panel"
+          role="tabpanel"
+          aria-labelledby="recent-feed-tab"
+        >
+          <div class="post-grid"></div>
 
-    <section
-      id="popular-posts"
-      class="posts-section popular-posts-section"
-      aria-labelledby="popular-posts-heading"
-    >
-      <div class="section-heading">
-        <div>
-          <p class="section-label">POPULAR CASES</p>
-          <h2 id="popular-posts-heading">人気の投稿</h2>
-        </div>
+          <div
+            id="empty-post-message"
+            class="empty-post-message"
+            hidden
+          >
+            <p class="empty-post-title">投稿がまだありません</p>
+            <p class="empty-post-description">
+              最初のスマホケースを投稿してみましょう。
+            </p>
+          </div>
+        </section>
 
-        <p id="popular-posts-note" class="post-count">
-          お気に入り数をもとに表示
-        </p>
+        <section
+          id="popular-feed-panel"
+          class="home-feed-panel"
+          role="tabpanel"
+          aria-labelledby="popular-feed-tab"
+        >
+          <div id="popular-post-grid" class="post-grid popular-post-grid"></div>
+
+          <p
+            id="popular-posts-status"
+            class="feed-status"
+            role="status"
+            aria-live="polite"
+          ></p>
+        </section>
       </div>
 
-      <div id="popular-post-grid" class="post-grid popular-post-grid"></div>
-
-      <p
-        id="popular-posts-status"
-        class="feed-status"
-        role="status"
-        aria-live="polite"
-      ></p>
+      <p class="home-feed-swipe-hint">
+        横にスワイプして切り替え
+      </p>
     </section>
 
     <!-- 投稿フォーム部分 -->
@@ -328,7 +359,7 @@
   <!-- 画像選択 -->
   <div class="form-group form-group-full">
     <label for="case-image">
-      スマホケースの画像
+      スマホケースの画像（最大5枚）
       <span class="required-label">必須</span>
     </label>
 
@@ -338,6 +369,7 @@
     id="case-image"
     name="caseImage"
     accept="image/png, image/jpeg, image/webp"
+    multiple
     required
   >
 
@@ -347,18 +379,16 @@
       選択した画像がここに表示されます
     </p>
 
-    <img
-      id="image-preview"
-      class="image-preview"
-      src=""
-      alt="選択したスマホケース画像のプレビュー"
+    <div
+      id="image-preview-list"
+      class="image-preview-list"
       hidden
-    >
+    ></div>
   </div>
 </div>
 
 <p class="input-note">
-  JPG、PNG、WebP形式の画像を選択できます。
+  JPG、PNG、WebP形式を最大5枚まで選択できます。1枚目が一覧の表紙になります。
   自分で撮影した画像など、投稿する権利のある画像を使用してください。
 </p>
   </div>
@@ -772,6 +802,8 @@
 
 <!-- ホームの「最近・人気」表示 -->
 <script src="home-feed.js"></script>
+<script src="splash-screen.js"></script>
+<script src="multi-image-ui.js"></script>
 
 <!-- CASEme本体の処理 -->
 <script src="script.js"></script>

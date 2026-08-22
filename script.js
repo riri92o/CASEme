@@ -53,7 +53,9 @@ const tagInput = document.querySelector("#tag-input");
 const addTagButton = document.querySelector("#add-tag-button");
 const selectedTagsArea = document.querySelector("#selected-tags");
 
-const imagePreview = document.querySelector("#image-preview");
+const imagePreviewList = document.querySelector(
+  "#image-preview-list"
+);
 const imagePreviewMessage = document.querySelector(
   "#image-preview-message"
 );
@@ -71,7 +73,7 @@ let selectedDeviceType = "all";
 let selectedFormTags = [];
 
 // プレビュー画像の一時URLです
-let currentPreviewUrl = null;
+let currentPreviewUrls = [];
 
 // LocalStorageで使用する保存場所の名前です
 const storageKey = "caseme-posts";
@@ -214,9 +216,16 @@ deviceFilter.addEventListener("change", () => {
 // =========================
 
 caseImageInput.addEventListener("change", () => {
-  const selectedFile = caseImageInput.files[0];
+  const selectedFiles = Array.from(caseImageInput.files);
 
-  if (!selectedFile) {
+  if (selectedFiles.length === 0) {
+    clearImagePreview();
+    return;
+  }
+
+  if (selectedFiles.length > 5) {
+    alert("画像は5枚まで選択できます。");
+    caseImageInput.value = "";
     clearImagePreview();
     return;
   }
@@ -227,7 +236,11 @@ caseImageInput.addEventListener("change", () => {
     "image/webp"
   ];
 
-  if (!allowedImageTypes.includes(selectedFile.type)) {
+  if (
+    selectedFiles.some((file) => {
+      return !allowedImageTypes.includes(file.type);
+    })
+  ) {
     alert("JPG、PNG、WebP形式の画像を選択してください。");
     caseImageInput.value = "";
     clearImagePreview();
@@ -236,32 +249,55 @@ caseImageInput.addEventListener("change", () => {
 
   const maximumFileSize = 5 * 1024 * 1024;
 
-  if (selectedFile.size > maximumFileSize) {
-    alert("画像のサイズは5MB以下にしてください。");
+  if (selectedFiles.some((file) => file.size > maximumFileSize)) {
+    alert("画像1枚あたりのサイズは5MB以下にしてください。");
     caseImageInput.value = "";
     clearImagePreview();
     return;
   }
 
-  if (currentPreviewUrl) {
-    URL.revokeObjectURL(currentPreviewUrl);
-  }
+  clearImagePreview();
 
-  currentPreviewUrl = URL.createObjectURL(selectedFile);
+  currentPreviewUrls = selectedFiles.map((file) => {
+    return URL.createObjectURL(file);
+  });
 
-  imagePreview.src = currentPreviewUrl;
-  imagePreview.hidden = false;
-  imagePreviewMessage.hidden = true;
+  displayImagePreviews(currentPreviewUrls);
 });
 
-function clearImagePreview() {
-  if (currentPreviewUrl) {
-    URL.revokeObjectURL(currentPreviewUrl);
-    currentPreviewUrl = null;
-  }
+function displayImagePreviews(imageUrls) {
+  imagePreviewList.replaceChildren();
 
-  imagePreview.src = "";
-  imagePreview.hidden = true;
+  imageUrls.forEach((imageUrl, index) => {
+    const previewItem = document.createElement("div");
+    previewItem.className = "image-preview-item";
+
+    const previewImage = document.createElement("img");
+    previewImage.className = "image-preview";
+    previewImage.src = imageUrl;
+    previewImage.alt = `投稿画像${index + 1}のプレビュー`;
+
+    const imageNumber = document.createElement("span");
+    imageNumber.className = "image-preview-number";
+    imageNumber.textContent = String(index + 1);
+
+    previewItem.appendChild(previewImage);
+    previewItem.appendChild(imageNumber);
+    imagePreviewList.appendChild(previewItem);
+  });
+
+  imagePreviewList.hidden = imageUrls.length === 0;
+  imagePreviewMessage.hidden = imageUrls.length > 0;
+}
+
+function clearImagePreview() {
+  currentPreviewUrls.forEach((imageUrl) => {
+    URL.revokeObjectURL(imageUrl);
+  });
+
+  currentPreviewUrls = [];
+  imagePreviewList.replaceChildren();
+  imagePreviewList.hidden = true;
   imagePreviewMessage.hidden = false;
 }
 
@@ -612,6 +648,20 @@ article.dataset.deviceType = postData.deviceType ?? "";
   image.src = postData.imageUrl;
   image.alt = `${postData.title}のスマホケース画像`;
 
+  const imageCount =
+    Array.isArray(postData.imageUrls)
+      ? postData.imageUrls.length
+      : 1;
+
+  const imageCountBadge = document.createElement("span");
+  imageCountBadge.className = "post-image-count";
+  imageCountBadge.textContent = `▣ ${imageCount}`;
+  imageCountBadge.setAttribute(
+    "aria-label",
+    `画像${imageCount}枚`
+  );
+  imageCountBadge.hidden = imageCount < 2;
+
   const content = document.createElement("div");
   content.className = "post-content";
 
@@ -673,6 +723,7 @@ content.appendChild(title);
 content.appendChild(cardActions);
 
 article.appendChild(image);
+article.appendChild(imageCountBadge);
 article.appendChild(content);
 
   return article;
@@ -740,7 +791,7 @@ function convertImageToDataUrl(imageFile) {
 caseForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const selectedImage = caseImageInput.files[0];
+  const selectedImages = Array.from(caseImageInput.files);
   const title = caseTitleInput.value.trim();
   const description = caseDescriptionInput.value.trim();
   const deviceType = deviceTypeInput.value;
@@ -767,7 +818,7 @@ const otherItems = otherItemsInput.value.trim();
     : null;
 
   // 新規投稿の場合だけ画像を必須にします
-  if (!selectedImage && !postBeingEdited) {
+  if (selectedImages.length === 0 && !postBeingEdited) {
     formStatus.textContent =
       "スマホケースの画像を選択してください。";
     return;
@@ -784,15 +835,21 @@ const otherItems = otherItemsInput.value.trim();
     : "画像を準備しています…";
 
   // 編集時は現在の画像をそのまま使用します
-  let postImageUrl = postBeingEdited
-    ? postBeingEdited.imageUrl
-    : "";
+  let postImageUrls = postBeingEdited
+    ? (
+        postBeingEdited.imageUrls ??
+        [postBeingEdited.imageUrl].filter(Boolean)
+      )
+    : [];
 
   // 新しい画像が選ばれた場合だけ変換します
-  if (selectedImage) {
+  if (selectedImages.length > 0) {
     try {
-      postImageUrl =
-        await convertImageToDataUrl(selectedImage);
+      postImageUrls = await Promise.all(
+        selectedImages.map((selectedImage) => {
+          return convertImageToDataUrl(selectedImage);
+        })
+      );
     } catch (error) {
       formStatus.textContent =
         "画像の読み込みに失敗しました。別の画像をお試しください。";
@@ -817,7 +874,8 @@ const otherItems = otherItemsInput.value.trim();
     keychains,
     otherItems,
 
-    imageUrl: postImageUrl,
+    imageUrls: postImageUrls,
+    imageUrl: postImageUrls[0] ?? "",
 
     // 編集しても最初の投稿日は残します
     createdAt: postBeingEdited
@@ -1152,9 +1210,17 @@ async function openPostDetail(postData) {
     "#detail-description"
   );
 
-  // 画像
-  detailImage.src = postData.imageUrl;
-  detailImage.alt = `${postData.title}のスマホケース画像`;
+  // 複数画像は横にスワイプして表示します
+  const detailImageArea = document.querySelector(
+    ".detail-image-area"
+  );
+
+  if (typeof window.renderPostImageGallery === "function") {
+    window.renderPostImageGallery(detailImageArea, postData);
+  } else {
+    detailImage.src = postData.imageUrl;
+    detailImage.alt = `${postData.title}のスマホケース画像`;
+  }
 
   // ハッシュタグ
   detailTags.replaceChildren();
@@ -1629,9 +1695,9 @@ editPostButton.addEventListener("click", () => {
 
   // 現在の投稿画像を表示します
   if (postToEdit.imageUrl) {
-    imagePreview.src = postToEdit.imageUrl;
-    imagePreview.hidden = false;
-    imagePreviewMessage.hidden = true;
+    displayImagePreviews(
+      postToEdit.imageUrls ?? [postToEdit.imageUrl]
+    );
   }
 
   // 編集時は画像の選択を必須にしません
@@ -2049,9 +2115,9 @@ function restoreEditingPostFromSession() {
 
     // 現在の投稿画像を表示します
     if (postToEdit.imageUrl) {
-      imagePreview.src = postToEdit.imageUrl;
-      imagePreview.hidden = false;
-      imagePreviewMessage.hidden = true;
+      displayImagePreviews(
+        postToEdit.imageUrls ?? [postToEdit.imageUrl]
+      );
     }
 
     // 編集時は画像の再選択を必須にしません

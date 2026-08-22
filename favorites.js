@@ -206,8 +206,15 @@ async function openPostDetail(postData) {
 
   if (!detailImage || !detailTags || !detailTitle || !detailDevice || !detailDescription || !postDetailDialog) return;
 
-  detailImage.src = postData.imageUrl;
-  detailImage.alt = `${postData.title}のスマホケース画像`;
+  if (typeof window.renderPostImageGallery === "function") {
+    window.renderPostImageGallery(
+      document.querySelector(".detail-image-area"),
+      postData
+    );
+  } else {
+    detailImage.src = postData.imageUrl;
+    detailImage.alt = `${postData.title}のスマホケース画像`;
+  }
 
   detailTags.replaceChildren();
   (postData.tags ?? []).forEach((tag) => {
