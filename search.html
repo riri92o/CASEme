@@ -20,7 +20,7 @@
   <link rel="manifest" href="site.webmanifest">
 
   <!-- デザインを設定するCSSファイルを読み込みます -->
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 
 <body class="home-page search-page">
@@ -302,7 +302,7 @@
   <!-- 画像選択 -->
   <div class="form-group form-group-full">
     <label for="case-image">
-      スマホケースの画像
+      スマホケースの画像（最大5枚）
       <span class="required-label">必須</span>
     </label>
 
@@ -312,6 +312,7 @@
     id="case-image"
     name="caseImage"
     accept="image/png, image/jpeg, image/webp"
+    multiple
     required
   >
 
@@ -321,18 +322,16 @@
       選択した画像がここに表示されます
     </p>
 
-    <img
-      id="image-preview"
-      class="image-preview"
-      src=""
-      alt="選択したスマホケース画像のプレビュー"
+    <div
+      id="image-preview-list"
+      class="image-preview-list"
       hidden
-    >
+    ></div>
   </div>
 </div>
 
 <p class="input-note">
-  JPG、PNG、WebP形式の画像を選択できます。
+  JPG、PNG、WebP形式を最大5枚まで選択できます。1枚目が一覧の表紙になります。
   自分で撮影した画像など、投稿する権利のある画像を使用してください。
 </p>
   </div>
@@ -743,6 +742,7 @@
 
 <!-- ヘッダーのログイン状態を管理 -->
 <script src="auth-ui.js"></script>
+<script src="multi-image-ui.js"></script>
 
 <!-- CASEme本体の処理 -->
 <script src="script.js"></script>
