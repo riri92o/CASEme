@@ -1,0 +1,24 @@
+{
+  "name": "CASEme",
+  "short_name": "CASEme",
+  "description": "スマホケースのカスタマイズを投稿・共有できるサービス",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6c8875",
+  "icons": [
+    {
+      "src": "caseme-icons/caseme-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "caseme-icons/caseme-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

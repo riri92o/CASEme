@@ -15,13 +15,7 @@
 
   <title>ユーザープロフィール | CASEme</title>
 
-  <meta name="theme-color" content="#6c8875">
-  <link rel="icon" href="favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" sizes="32x32" href="caseme-icons/favicon-32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="caseme-icons/apple-touch-icon.png">
-  <link rel="manifest" href="site.webmanifest">
-
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="user-page">
@@ -324,46 +318,5 @@
   <script src="supabase-notifications.js"></script>
   <script src="user-profile.js"></script>
 
-  <!-- スマホ用固定下部ナビゲーション -->
-  <nav class="bottom-nav" aria-label="モバイルナビゲーション">
-    <a href="index.html" id="bottom-nav-home" class="bottom-nav-item">
-      <svg class="bottom-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-      </svg>
-      <span class="bottom-nav-label">ホーム</span>
-    </a>
-    <a href="index.html?search=true" id="bottom-nav-search" class="bottom-nav-item">
-      <svg class="bottom-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-      </svg>
-      <span class="bottom-nav-label">検索</span>
-    </a>
-    <a href="post.html" id="bottom-nav-post" class="bottom-nav-item bottom-nav-center">
-      <div class="bottom-nav-center-btn" aria-label="投稿する">
-        <svg class="bottom-nav-center-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-      </div>
-      <span class="bottom-nav-label">投稿する</span>
-    </a>
-    <a href="favorites.html" id="bottom-nav-favorites" class="bottom-nav-item">
-      <svg class="bottom-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-      </svg>
-      <span class="bottom-nav-label">お気に入り</span>
-    </a>
-    <a href="auth.html" id="bottom-nav-profile" class="bottom-nav-item">
-      <svg class="bottom-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-        <circle cx="12" cy="7" r="4"></circle>
-      </svg>
-      <span class="bottom-nav-label">プロフィール</span>
-    </a>
-  </nav>
-
-  <script src="bottom-nav.js"></script>
 </body>
 </html>
