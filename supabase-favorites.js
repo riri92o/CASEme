@@ -44,6 +44,33 @@ async function fetchFavoritePostIds() {
   });
 }
 
+// 投稿ごとのお気に入り数を取得します。
+// 集計結果だけを返すSupabase関数を使うため、
+// 誰がお気に入りしたかという個人情報は取得しません。
+async function fetchPostFavoriteCounts() {
+  const { data, error } = await caseMeSupabase.rpc(
+    "get_post_favorite_counts"
+  );
+
+  if (error) {
+    console.warn(
+      "人気順の集計を取得できませんでした。新着順で表示します。",
+      error
+    );
+
+    return new Map();
+  }
+
+  return new Map(
+    (data ?? []).map((item) => {
+      return [
+        item.post_id,
+        Number(item.favorite_count) || 0
+      ];
+    })
+  );
+}
+
 // 投稿をお気に入りへ追加します
 async function addSupabaseFavorite(postId) {
   const user = await getFavoriteUser();
