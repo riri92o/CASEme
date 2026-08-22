@@ -21,6 +21,17 @@ function getCaseImagePublicUrl(imagePath) {
 
 // Supabaseの列名をCASEmeで使う名前へ変換します
 function convertSupabasePost(data) {
+  const imagePaths =
+    Array.isArray(data.image_paths) && data.image_paths.length > 0
+      ? data.image_paths
+      : data.image_path
+        ? [data.image_path]
+        : [];
+
+  const imageUrls = imagePaths.map((imagePath) => {
+    return getCaseImagePublicUrl(imagePath);
+  });
+
   return {
     id: data.id,
     userId: data.user_id,
@@ -37,10 +48,10 @@ function convertSupabasePost(data) {
     keychains: data.keychains ?? [],
 
     otherItems: data.other_items ?? "",
-    imagePath: data.image_path,
-    imageUrl: getCaseImagePublicUrl(
-      data.image_path
-    ),
+    imagePaths,
+    imageUrls,
+    imagePath: imagePaths[0] ?? "",
+    imageUrl: imageUrls[0] ?? "",
 
     createdAt: data.created_at,
     updatedAt: data.updated_at,
@@ -63,31 +74,45 @@ async function createSupabasePost(postData) {
     );
   }
 
-  // 画像をアップロード可能な形式へ変換します
-  const imageBlob = await dataUrlToBlob(
-    postData.imageUrl
-  );
+  const sourceImageUrls =
+    Array.isArray(postData.imageUrls) && postData.imageUrls.length > 0
+      ? postData.imageUrls
+      : [postData.imageUrl];
 
-  const imageFileName = `${crypto.randomUUID()}.jpg`;
+  const imagePaths = [];
 
-  // RLSのルールに合わせて、
-  // ユーザーIDを先頭フォルダにします
-  const imagePath =
-    `${user.id}/${imageFileName}`;
+  try {
+    for (const imageUrl of sourceImageUrls) {
+      const imageBlob = await dataUrlToBlob(imageUrl);
+      const imagePath = `${user.id}/${crypto.randomUUID()}.jpg`;
 
-  const { error: uploadError } =
-    await caseMeSupabase.storage
-      .from(CASE_IMAGE_BUCKET)
-      .upload(imagePath, imageBlob, {
-        contentType: "image/jpeg",
-        upsert: false
-      });
+      const { error: uploadError } =
+        await caseMeSupabase.storage
+          .from(CASE_IMAGE_BUCKET)
+          .upload(imagePath, imageBlob, {
+            contentType: "image/jpeg",
+            upsert: false
+          });
 
-  if (uploadError) {
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      imagePaths.push(imagePath);
+    }
+  } catch (uploadError) {
+    if (imagePaths.length > 0) {
+      await caseMeSupabase.storage
+        .from(CASE_IMAGE_BUCKET)
+        .remove(imagePaths);
+    }
+
     throw new Error(
       `画像を保存できませんでした：${uploadError.message}`
     );
   }
+
+  const imagePath = imagePaths[0];
 
   // 投稿情報をデータベースへ保存します
   const { data, error: insertError } =
@@ -108,7 +133,8 @@ async function createSupabasePost(postData) {
         keychains: postData.keychains,
 
         other_items: postData.otherItems || null,
-        image_path: imagePath
+        image_path: imagePath,
+        image_paths: imagePaths
       })
       .select()
       .single();
@@ -118,7 +144,7 @@ async function createSupabasePost(postData) {
     // 先にアップロードした画像を取り除きます
     await caseMeSupabase.storage
       .from(CASE_IMAGE_BUCKET)
-      .remove([imagePath]);
+      .remove(imagePaths);
 
     throw new Error(
       `投稿情報を保存できませんでした：${insertError.message}`
@@ -167,44 +193,58 @@ async function updateSupabasePost(
     );
   }
 
-  let imagePath = previousPost.imagePath;
-  let newlyUploadedImagePath = null;
+  let imagePaths =
+    Array.isArray(previousPost.imagePaths) &&
+    previousPost.imagePaths.length > 0
+      ? [...previousPost.imagePaths]
+      : [previousPost.imagePath].filter(Boolean);
+
+  let newlyUploadedImagePaths = [];
 
   // 新しい画像が選ばれた場合はData URLになります
-  const hasNewImage =
-    typeof postData.imageUrl === "string" &&
-    postData.imageUrl.startsWith("data:");
+  const submittedImageUrls =
+    Array.isArray(postData.imageUrls) && postData.imageUrls.length > 0
+      ? postData.imageUrls
+      : [postData.imageUrl].filter(Boolean);
+
+  const hasNewImage = submittedImageUrls.some((imageUrl) => {
+    return typeof imageUrl === "string" && imageUrl.startsWith("data:");
+  });
 
   if (hasNewImage) {
-    const imageBlob = await dataUrlToBlob(
-      postData.imageUrl
-    );
+    try {
+      for (const imageUrl of submittedImageUrls) {
+        const imageBlob = await dataUrlToBlob(imageUrl);
+        const newImagePath =
+          `${user.id}/${crypto.randomUUID()}.jpg`;
 
-    const imageFileName =
-      `${crypto.randomUUID()}.jpg`;
+        const { error: uploadError } =
+          await caseMeSupabase.storage
+            .from(CASE_IMAGE_BUCKET)
+            .upload(newImagePath, imageBlob, {
+              contentType: "image/jpeg",
+              upsert: false
+            });
 
-    newlyUploadedImagePath =
-      `${user.id}/${imageFileName}`;
+        if (uploadError) {
+          throw uploadError;
+        }
 
-    const { error: uploadError } =
-      await caseMeSupabase.storage
-        .from(CASE_IMAGE_BUCKET)
-        .upload(
-          newlyUploadedImagePath,
-          imageBlob,
-          {
-            contentType: "image/jpeg",
-            upsert: false
-          }
-        );
+        newlyUploadedImagePaths.push(newImagePath);
+      }
+    } catch (uploadError) {
+      if (newlyUploadedImagePaths.length > 0) {
+        await caseMeSupabase.storage
+          .from(CASE_IMAGE_BUCKET)
+          .remove(newlyUploadedImagePaths);
+      }
 
-    if (uploadError) {
       throw new Error(
         `新しい画像を保存できませんでした：${uploadError.message}`
       );
     }
 
-    imagePath = newlyUploadedImagePath;
+    imagePaths = [...newlyUploadedImagePaths];
   }
 
   const { data, error: updateError } =
@@ -224,7 +264,8 @@ async function updateSupabasePost(
         keychains: postData.keychains,
 
         other_items: postData.otherItems || null,
-        image_path: imagePath,
+        image_path: imagePaths[0],
+        image_paths: imagePaths,
         updated_at: new Date().toISOString()
       })
       .eq("id", previousPost.id)
@@ -234,10 +275,10 @@ async function updateSupabasePost(
 
   if (updateError) {
     // 更新に失敗した場合、新しく追加した画像を削除します
-    if (newlyUploadedImagePath) {
+    if (newlyUploadedImagePaths.length > 0) {
       await caseMeSupabase.storage
         .from(CASE_IMAGE_BUCKET)
-        .remove([newlyUploadedImagePath]);
+        .remove(newlyUploadedImagePaths);
     }
 
     throw new Error(
@@ -247,13 +288,18 @@ async function updateSupabasePost(
 
   // 更新成功後に古い画像を削除します
   if (
-    newlyUploadedImagePath &&
-    previousPost.imagePath
+    newlyUploadedImagePaths.length > 0
   ) {
+    const previousImagePaths =
+      Array.isArray(previousPost.imagePaths) &&
+      previousPost.imagePaths.length > 0
+        ? previousPost.imagePaths
+        : [previousPost.imagePath].filter(Boolean);
+
     const { error: removeOldImageError } =
       await caseMeSupabase.storage
         .from(CASE_IMAGE_BUCKET)
-        .remove([previousPost.imagePath]);
+        .remove(previousImagePaths);
 
     if (removeOldImageError) {
       console.warn(
@@ -343,11 +389,16 @@ async function deleteSupabasePost(postData) {
   }
 
   // データベース削除後に画像も削除します
-  if (deletedImagePath) {
+  const deletedImagePaths =
+    Array.isArray(postData.imagePaths) && postData.imagePaths.length > 0
+      ? postData.imagePaths
+      : [deletedImagePath].filter(Boolean);
+
+  if (deletedImagePaths.length > 0) {
     const { error: imageDeleteError } =
       await caseMeSupabase.storage
         .from(CASE_IMAGE_BUCKET)
-        .remove([deletedImagePath]);
+        .remove(deletedImagePaths);
 
     if (imageDeleteError) {
       console.warn(
