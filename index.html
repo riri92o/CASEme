@@ -14,14 +14,13 @@
   <title>CASEme | スマホケースを見つけよう</title>
 
   <meta name="theme-color" content="#6c8875">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="caseme-icons/favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="caseme-icons/apple-touch-icon.png">
   <link rel="manifest" href="site.webmanifest">
 
   <!-- デザインを設定するCSSファイルを読み込みます -->
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 
 <body class="home-page">
@@ -39,8 +38,8 @@
       </a>
 
       <nav class="header-nav" aria-label="メインメニュー">
-       <a href="#posts" aria-current="page">ホーム</a>
-       <a href="#tags">タグを探す</a>
+       <a href="index.html" aria-current="page">ホーム</a>
+       <a href="search.html">検索</a>
         <a href="post.html" class="header-post-button">
           投稿する
         </a>
@@ -184,7 +183,7 @@
           スマホケースも、おしゃれの一部。ステッカー、キーホルダー、推し活アイテムなどを使ったみんなのスタイルを見て、次のカスタマイズの参考にしよう。
         </p>
 
-        <a href="#posts" class="hero-button">投稿を見てみる</a>
+        <a href="search.html" class="hero-button">ケースを探してみる</a>
       </div>
     </section>
 
@@ -258,8 +257,8 @@
     <section id="posts" class="posts-section">
       <div class="section-heading">
         <div>
-          <p class="section-label">LATEST CASES</p>
-          <h2>みんなのスマホケース</h2>
+          <p class="section-label">NEW CASES</p>
+          <h2>最近の投稿</h2>
         </div>
 
         <div class="post-list-controls">
@@ -284,6 +283,32 @@
 
       </div>
 
+    </section>
+
+    <section
+      id="popular-posts"
+      class="posts-section popular-posts-section"
+      aria-labelledby="popular-posts-heading"
+    >
+      <div class="section-heading">
+        <div>
+          <p class="section-label">POPULAR CASES</p>
+          <h2 id="popular-posts-heading">人気の投稿</h2>
+        </div>
+
+        <p id="popular-posts-note" class="post-count">
+          お気に入り数をもとに表示
+        </p>
+      </div>
+
+      <div id="popular-post-grid" class="post-grid popular-post-grid"></div>
+
+      <p
+        id="popular-posts-status"
+        class="feed-status"
+        role="status"
+        aria-live="polite"
+      ></p>
     </section>
 
     <!-- 投稿フォーム部分 -->
@@ -745,6 +770,9 @@
 <!-- ヘッダーのログイン状態を管理 -->
 <script src="auth-ui.js"></script>
 
+<!-- ホームの「最近・人気」表示 -->
+<script src="home-feed.js"></script>
+
 <!-- CASEme本体の処理 -->
 <script src="script.js"></script>
 
@@ -757,7 +785,7 @@
     </svg>
     <span class="bottom-nav-label">ホーム</span>
   </a>
-  <a href="index.html?search=true" id="bottom-nav-search" class="bottom-nav-item">
+  <a href="search.html" id="bottom-nav-search" class="bottom-nav-item">
     <svg class="bottom-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="11" cy="11" r="8"></circle>
       <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
