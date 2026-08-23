@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40">
+  <title>スマートフォン型のC</title>
+  <path
+    d="M26 5.5H14C8.35 5.5 5 9.15 5 15v10c0 5.85 3.35 9.5 9 9.5h12"
+    fill="none"
+    stroke="#1c211e"
+    stroke-width="4.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <circle cx="12" cy="12.5" r="2.15" fill="#668b78"/>
+  <circle cx="17.25" cy="12.5" r="1.65" fill="#668b78"/>
+</svg>
