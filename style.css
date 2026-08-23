@@ -4042,3 +4042,276 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ==========================================
+   ホーム画面：写真中心の仕上げ
+========================================== */
+
+/* 英語の飾り見出しを減らし、投稿アプリらしく簡潔にします */
+.hero-label,
+.section-label {
+  display: none;
+}
+
+.home-page:not(.search-page) .hero {
+  padding: 54px 0 46px;
+  background:
+    radial-gradient(
+      circle at 88% 42%,
+      rgba(237, 243, 239, 0.92),
+      transparent 29%
+    );
+}
+
+.home-page:not(.search-page) .hero::before,
+.home-page:not(.search-page) .hero::after {
+  display: none;
+}
+
+.home-page:not(.search-page) .hero h1 {
+  font-size: clamp(36px, 5vw, 52px);
+  line-height: 1.14;
+}
+
+.home-page:not(.search-page) .hero-description {
+  max-width: 520px;
+  margin: 17px 0 24px;
+  line-height: 1.75;
+}
+
+.home-page:not(.search-page) .hero-button {
+  min-height: 43px;
+  padding-inline: 20px;
+}
+
+.home-page:not(.search-page) .home-feed-section {
+  margin-top: 46px;
+}
+
+.home-page:not(.search-page) .home-feed-section .section-heading {
+  margin-bottom: 18px;
+}
+
+.home-page:not(.search-page) .home-feed-section .section-heading h2 {
+  font-size: clamp(23px, 3vw, 29px);
+}
+
+.post-image-wrapper {
+  position: relative;
+  overflow: hidden;
+  background: #eef1ef;
+}
+
+.post-image-wrapper::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 34%;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(8, 12, 10, 0.5),
+    transparent
+  );
+}
+
+.post-image-wrapper .post-image {
+  display: block;
+  border-bottom: 0;
+  transition: transform 0.35s ease;
+}
+
+.post-card:hover .post-image-wrapper .post-image {
+  transform: scale(1.015);
+}
+
+.post-author-overlay {
+  position: absolute;
+  right: 48px;
+  bottom: 10px;
+  left: 10px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: #ffffff;
+}
+
+.post-author-avatar {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  flex: 0 0 auto;
+  place-items: center;
+  overflow: hidden;
+  background-color: rgba(102, 139, 120, 0.92);
+  background-position: center;
+  background-size: cover;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.post-author-avatar.has-image {
+  color: transparent;
+}
+
+.post-author-name {
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.32);
+  white-space: nowrap;
+}
+
+.post-image-wrapper .like-button {
+  position: absolute;
+  right: 9px;
+  bottom: 8px;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  color: #ffffff;
+  background: rgba(17, 17, 17, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  backdrop-filter: blur(5px);
+}
+
+.post-image-wrapper .like-button:hover,
+.post-image-wrapper .like-button.active {
+  color: #ffffff;
+  background: rgba(79, 112, 95, 0.9);
+}
+
+.post-image-wrapper .post-image-count {
+  top: 9px;
+  right: 9px;
+}
+
+.post-card {
+  border-color: rgba(23, 23, 23, 0.06);
+  border-radius: 12px;
+  box-shadow: 0 3px 14px rgba(20, 30, 25, 0.035);
+}
+
+.post-card:hover {
+  box-shadow: 0 8px 24px rgba(20, 30, 25, 0.075);
+}
+
+.home-feed-panel .post-tags {
+  margin-bottom: 0;
+  color: #647169;
+}
+
+.home-feed-panel .post-card-actions:empty {
+  display: none;
+}
+
+.home-feed-panel .post-card-actions {
+  min-height: 0;
+  margin-top: 0;
+}
+
+.home-feed-panel .post-card-actions:has(.favorite-count) {
+  margin-top: 5px;
+}
+
+.home-feed-panel .device-name {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .site-header {
+    border-bottom-color: rgba(23, 23, 23, 0.06);
+  }
+
+  .header-inner {
+    min-height: 58px;
+  }
+
+  .home-page:not(.search-page) .hero {
+    width: calc(100% - 28px);
+    padding: 31px 2px 30px;
+    background:
+      radial-gradient(
+        circle at 94% 28%,
+        rgba(237, 243, 239, 0.94),
+        transparent 35%
+      );
+  }
+
+  .home-page:not(.search-page) .hero h1 {
+    max-width: 310px;
+    font-size: 32px;
+    letter-spacing: -0.05em;
+  }
+
+  .home-page:not(.search-page) .hero-description {
+    max-width: 320px;
+    margin: 13px 0 19px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .home-page:not(.search-page) .hero-button {
+    min-height: 40px;
+    padding-inline: 18px;
+    font-size: 12px;
+  }
+
+  .home-page:not(.search-page) .home-feed-section {
+    margin-top: 34px;
+  }
+
+  .home-page:not(.search-page) .post-count {
+    display: none;
+  }
+
+  .home-feed-panel .post-content {
+    padding: 8px 8px 9px;
+  }
+
+  .home-feed-panel .post-content h3 {
+    margin: 4px 0 0;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .post-author-overlay {
+    right: 39px;
+    bottom: 7px;
+    left: 7px;
+    gap: 5px;
+  }
+
+  .post-author-avatar {
+    width: 21px;
+    height: 21px;
+    font-size: 8px;
+  }
+
+  .post-author-name {
+    font-size: 9px;
+  }
+
+  .post-image-wrapper .like-button {
+    right: 6px;
+    bottom: 6px;
+    width: 29px;
+    height: 29px;
+    font-size: 18px;
+  }
+
+  .post-image-wrapper .post-image-count {
+    top: 6px;
+    right: 6px;
+    padding: 4px 6px;
+    font-size: 8px;
+  }
+}
