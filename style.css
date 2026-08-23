@@ -82,13 +82,39 @@ button {
 }
 
 .logo {
-  font-size: 25px;
-  font-weight: 800;
-  letter-spacing: -0.06em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  font-family:
+    ui-rounded,
+    "Avenir Next",
+    "Helvetica Neue",
+    sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1;
 }
 
-.logo span {
+.logo-phone-c {
+  width: 23px;
+  height: 29px;
+  margin-right: -1px;
+  flex: 0 0 auto;
+  transition: transform 0.2s ease;
+}
+
+.logo-word {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.logo-me {
   color: var(--accent);
+}
+
+.logo:hover .logo-phone-c {
+  transform: rotate(-3deg) translateY(-1px);
 }
 
 .header-nav {
@@ -474,6 +500,11 @@ button {
 
   .logo {
     font-size: 18px;
+  }
+
+  .logo-phone-c {
+    width: 18px;
+    height: 24px;
   }
 
   .header-inner {
