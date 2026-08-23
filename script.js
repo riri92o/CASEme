@@ -578,6 +578,19 @@ async function displaySupabasePosts() {
       favoritePostIds
     );
 
+    let profileMap = new Map();
+
+    try {
+      profileMap = await fetchProfilesByIds(
+        supabasePosts.map((postData) => postData.userId)
+      );
+    } catch (profileError) {
+      console.error(
+        "投稿者情報を読み込めませんでした。",
+        profileError
+      );
+    }
+
     // 以前読み込んだSupabase投稿があれば配列から外します
     savedPosts = savedPosts.filter(
       (post) => post.storageType !== "supabase"
@@ -588,6 +601,8 @@ async function displaySupabasePosts() {
       postData.isLiked = favoritePostIdSet.has(
         postData.id
       );
+      postData.authorProfile =
+        profileMap.get(postData.userId) ?? null;
     });
 
     // 詳細表示・編集・削除でも使えるように配列へ追加します
@@ -648,6 +663,10 @@ article.dataset.deviceType = postData.deviceType ?? "";
   image.src = postData.imageUrl;
   image.alt = `${postData.title}のスマホケース画像`;
 
+  const imageWrapper = document.createElement("div");
+  imageWrapper.className = "post-image-wrapper";
+  imageWrapper.appendChild(image);
+
   const imageCount =
     Array.isArray(postData.imageUrls)
       ? postData.imageUrls.length
@@ -661,6 +680,34 @@ article.dataset.deviceType = postData.deviceType ?? "";
     `画像${imageCount}枚`
   );
   imageCountBadge.hidden = imageCount < 2;
+  imageWrapper.appendChild(imageCountBadge);
+
+  if (postData.userId) {
+    const profile = postData.authorProfile ?? {};
+    const displayName =
+      profile.displayName || profile.username || "CASEmeユーザー";
+
+    const authorOverlay = document.createElement("div");
+    authorOverlay.className = "post-author-overlay";
+
+    const authorAvatar = document.createElement("span");
+    authorAvatar.className = "post-author-avatar";
+    authorAvatar.textContent = displayName.charAt(0).toUpperCase();
+
+    if (profile.avatarUrl) {
+      authorAvatar.style.backgroundImage =
+        `url("${profile.avatarUrl}")`;
+      authorAvatar.classList.add("has-image");
+    }
+
+    const authorName = document.createElement("span");
+    authorName.className = "post-author-name";
+    authorName.textContent = displayName;
+
+    authorOverlay.appendChild(authorAvatar);
+    authorOverlay.appendChild(authorName);
+    imageWrapper.appendChild(authorOverlay);
+  }
 
   const content = document.createElement("div");
   content.className = "post-content";
@@ -716,14 +763,13 @@ if (postData.isLiked === true) {
 }
 
 cardActions.appendChild(device);
-cardActions.appendChild(likeButton);
+imageWrapper.appendChild(likeButton);
 
 content.appendChild(tags);
 content.appendChild(title);
 content.appendChild(cardActions);
 
-article.appendChild(image);
-article.appendChild(imageCountBadge);
+article.appendChild(imageWrapper);
 article.appendChild(content);
 
   return article;
@@ -913,6 +959,9 @@ if (postBeingEdited) {
         previousPostData
       );
 
+      updatedPostData.authorProfile =
+        previousPostData.authorProfile ?? null;
+
       // 更新後のデータを画面管理用の配列へ入れます
       savedPosts[postIndex] = updatedPostData;
     } else {
@@ -962,6 +1011,17 @@ if (postBeingEdited) {
 
     // 画像と投稿情報をSupabaseへ保存します
     const createdPost = await createSupabasePost(postData);
+
+    try {
+      createdPost.authorProfile =
+        await fetchCurrentProfile();
+    } catch (profileError) {
+      console.error(
+        "投稿者情報を読み込めませんでした。",
+        profileError
+      );
+      createdPost.authorProfile = null;
+    }
 
     // 新規投稿データを配列へ追加し、画面にカードを追加します
     savedPosts.push(createdPost);
