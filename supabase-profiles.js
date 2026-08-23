@@ -88,6 +88,44 @@ async function fetchProfileById(userId) {
   };
 }
 
+// 複数の投稿者プロフィールを一度に取得します
+async function fetchProfilesByIds(userIds) {
+  const uniqueUserIds = [...new Set(
+    userIds.filter(Boolean)
+  )];
+
+  if (uniqueUserIds.length === 0) {
+    return new Map();
+  }
+
+  const { data, error } = await caseMeSupabase
+    .from("profiles")
+    .select(
+      "id, username, display_name, avatar_url"
+    )
+    .in("id", uniqueUserIds);
+
+  if (error) {
+    throw error;
+  }
+
+  return new Map(
+    (data ?? []).map((profile) => {
+      return [
+        profile.id,
+        {
+          id: profile.id,
+          username: profile.username ?? "",
+          displayName: profile.display_name ?? "",
+          avatarUrl: getProfileAvatarPublicUrl(
+            profile.avatar_url
+          )
+        }
+      ];
+    })
+  );
+}
+
 // ログイン中のユーザーのプロフィールを更新します
 async function updateCurrentProfile(profileData) {
   const user = await getCurrentProfileUser();
