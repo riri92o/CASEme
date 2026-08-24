@@ -84,37 +84,18 @@ button {
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 0;
-  font-family:
-    ui-rounded,
-    "Avenir Next",
-    "Helvetica Neue",
-    sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.045em;
   line-height: 1;
 }
 
-.logo-phone-c {
-  width: 23px;
-  height: 29px;
-  margin-right: -1px;
-  flex: 0 0 auto;
+.logo-wordmark {
+  display: block;
+  width: 124px;
+  height: auto;
   transition: transform 0.2s ease;
 }
 
-.logo-word {
-  display: inline-flex;
-  align-items: baseline;
-}
-
-.logo-me {
-  color: var(--accent);
-}
-
-.logo:hover .logo-phone-c {
-  transform: rotate(-3deg) translateY(-1px);
+.logo:hover .logo-wordmark {
+  transform: rotate(-1deg) translateY(-1px);
 }
 
 .header-nav {
@@ -498,13 +479,8 @@ button {
     padding-bottom: calc(72px + env(safe-area-inset-bottom));
   }
 
-  .logo {
-    font-size: 18px;
-  }
-
-  .logo-phone-c {
-    width: 18px;
-    height: 24px;
+  .logo-wordmark {
+    width: 102px;
   }
 
   .header-inner {
@@ -671,16 +647,10 @@ button {
   box-shadow: 0 12px 32px rgba(48, 78, 63, 0.14);
 }
 
-.app-splash-logo {
-  margin: 0;
-  color: #111111;
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-}
-
-.app-splash-logo span {
-  color: var(--accent-dark);
+.app-splash-wordmark {
+  display: block;
+  width: 172px;
+  height: auto;
 }
 
 @keyframes splashBrandIn {
